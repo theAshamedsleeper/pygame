@@ -59,7 +59,7 @@ class SpriteRenderer(Component):
     def __init__(self,sprite_name) -> None:
         super().__init__()
         
-        self._sprite_image = pygame.image.load(f"pyGame\\Assets\\{sprite_name}")
+        self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
         self._sprite = pygame.sprite.Sprite()
         self._sprite.rect = self._sprite_image.get_rect()
 
@@ -95,7 +95,7 @@ class Animator(Component):
     def add_animation(self, name, *args):
         frames =[]
         for arg in args:
-            sprite_image = pygame.image.load(f"pyGame\\Assets\\{arg}")
+            sprite_image = pygame.image.load(f"Assets\\{arg}")
             frames.append(sprite_image)
 
         self._animations[name] = frames
