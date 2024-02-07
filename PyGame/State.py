@@ -24,6 +24,8 @@ class State(ABC):
     def update(self, delta_time):
         pass
 
+
+
 class MenuState(State):
 
     def __init__(self, game_world) -> None:
@@ -51,6 +53,8 @@ class MenuState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+
 
 class FirstLevelState(State):
 
