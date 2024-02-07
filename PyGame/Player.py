@@ -39,7 +39,7 @@ class Player(Component):
 
     def shoot(self):
         projectile = GameObject(None)
-        sr = projectile.add_component(SpriteRenderer("laser.png"))
+        sr = projectile.add_component(SpriteRenderer("tile001.png"))
         projectile.add_component(Laser())
 
         projectile_position = pygame.math.Vector2(self._gameObject.transform.position.x+(self._sprite_size.x/2)-sr.sprite_image.get_width()/2
@@ -48,4 +48,4 @@ class Player(Component):
         projectile.transform.position = projectile_position
 
 
-        self._game_world.instantiate(projectile)
+        self._game_world.current_State.instantiate(projectile)

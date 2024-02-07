@@ -78,7 +78,7 @@ class FirstLevelState(State):
         self._gameObjects.append(go)
 
     def instantiate(self, gameObject):
-        gameObject.awake(self)
+        gameObject.awake(self._game_world)
         gameObject.start()
         self._gameObjects.append(gameObject)
 

@@ -20,11 +20,15 @@ class GameWorld:
     @property
     def screen(self):
         return self._screen
+    
+    @property
+    def current_State(self):
+        return self._currentState
 
-    def instantiate(self, gameObject):
-       gameObject.awake(self)
-       gameObject.start()
-       self._gameObjects.append(gameObject)
+   # def instantiate(self, gameObject):
+   #    gameObject.awake(self)
+   #    gameObject.start()
+   #    self._gameObjects.append(gameObject)
 
 
     def Awake(self):
