@@ -68,22 +68,23 @@ class FirstLevelState(State):
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
         go = GameObject(pygame.math.Vector2(0,0))
-        go.add_component(SpriteRenderer("player.png"))
+        go.add_component(SpriteRenderer("player_ship.png"))
         go.add_component(Player())
         animator = go.add_component(Animator())
 
-        animator.add_animation("Idle","player02.png",
-                                "player03.png",
-                                "player04.png",
-                                "player05.png",
-                                "player06.png",
-                                "player07.png",
-                                "player08.png",
-                                "player07.png",
-                                "player06.png",
-                                "player05.png",
-                                "player04.png",
-                                "player03.png",)
+        animator.add_animation("Idle","player_ship.png",
+                                # "player03.png",
+                                # "player04.png",
+                                # "player05.png",
+                                # "player06.png",
+                                # "player07.png",
+                                # "player08.png",
+                                # "player07.png",
+                                # "player06.png",
+                                # "player05.png",
+                                # "player04.png",
+                                # "player03.png"
+                               )
         
         animator.play_animation("Idle")
         self._gameObjects.append(go)
@@ -114,6 +115,8 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
         
             
