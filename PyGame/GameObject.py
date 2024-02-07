@@ -5,10 +5,18 @@ class GameObject:
     def __init__(self, position) -> None:
          self._components = {}
          self._transform = self.add_component(Transform(position))
+         self._is_destroyed = False
 
     @property
     def transform(self):
         return self._transform
+
+    @property
+    def is_destroyed(self):
+        return self._transform
+    
+    def destroy(self):
+        self._is_destroyed = True
 
     def add_component(self, component):
         component_name = component.__class__.__name__
