@@ -15,7 +15,7 @@ class Background(Component):
         # Scale the background image to fit the screen size
         screen_width = self._game_world.screen.get_width()
         screen_height = self._game_world.screen.get_height()
-        scaled_width = screen_width * 4
+        scaled_width = screen_width * 2
         self._background_image = pygame.transform.scale(self._background_image, (scaled_width, screen_height))
 
     def awake(self, game_world):
