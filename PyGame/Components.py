@@ -59,7 +59,7 @@ class SpriteRenderer(Component):
     def __init__(self,sprite_name) -> None:
         super().__init__()
         
-        self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        self._sprite_image = pygame.image.load(f"pyGame\\Assets\\{sprite_name}")
         self._sprite = pygame.sprite.Sprite()
         self._sprite.rect = self._sprite_image.get_rect()
 
@@ -71,6 +71,8 @@ class SpriteRenderer(Component):
     def sprite_image(self, value):
         self._sprite_image = value      
     
+    
+
     def awake(self, game_world):
         self._game_world = game_world
         self._sprite.rect.topleft = self.gameObject.transform.position
@@ -95,7 +97,7 @@ class Animator(Component):
     def add_animation(self, name, *args):
         frames =[]
         for arg in args:
-            sprite_image = pygame.image.load(f"Assets\\{arg}")
+            sprite_image = pygame.image.load(f"pyGame\\Assets\\{arg}")
             frames.append(sprite_image)
 
         self._animations[name] = frames
@@ -133,3 +135,13 @@ class Animator(Component):
 
             # Update the sprite image
             self._sprite_renderer.sprite_image = animation_sequence[self._current_frame_index]
+
+class Laser(Component):
+    def awake(self, game_world):
+        pass
+    def start(self):
+        pass
+    def update(self, delta_time):
+        #speed = 500
+        #movement = pygame.math.Vector2(0,-speed)
+        pass
