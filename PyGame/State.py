@@ -77,6 +77,11 @@ class FirstLevelState(State):
         animator.play_animation("Idle")
         self._gameObjects.append(go)
 
+    def instantiate(self, gameObject):
+        gameObject.awake(self)
+        gameObject.start()
+        self._gameObjects.append(gameObject)
+
     def awake(self, game_world):
         super().awake(game_world)
         for gameObject in self._gameObjects[:]:

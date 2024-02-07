@@ -133,3 +133,15 @@ class Animator(Component):
 
             # Update the sprite image
             self._sprite_renderer.sprite_image = animation_sequence[self._current_frame_index]
+
+class Laser(Component):
+        def awake(self, game_world):
+            pass
+
+        def start(self):
+            pass
+
+        def update(self, delta_time):
+            #speed = 500
+            #movement = pygame.math.Vector2(0,-speed)
+            pass

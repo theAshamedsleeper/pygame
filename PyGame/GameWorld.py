@@ -1,11 +1,14 @@
 import pygame
 from State import MenuState
 from State import FirstLevelState
+from GameObject import GameObject
 
 class GameWorld:
     
     def __init__(self) -> None:
         pygame.init()  
+
+        self._gameObjects = []
         self._screen = pygame.display.set_mode((1280, 720))
         self._running = True
         self._clock = pygame.time.Clock()
@@ -17,6 +20,12 @@ class GameWorld:
     @property
     def screen(self):
         return self._screen
+
+    def instantiate(self, gameObject):
+       gameObject.awake(self)
+       gameObject.start()
+       self._gameObjects.append(gameObject)
+
 
     def Awake(self):
         self._currentState.awake(self)
