@@ -142,6 +142,9 @@ class Laser(Component):
     def start(self):
         pass
     def update(self, delta_time):
-        #speed = 500
+
+        speed = 10
+        direction = pygame.math.Vector2(speed,0)
         #movement = pygame.math.Vector2(0,-speed)
+        self._gameObject.transform.translate(direction)
         pass

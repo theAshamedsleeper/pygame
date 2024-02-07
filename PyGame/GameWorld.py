@@ -25,16 +25,9 @@ class GameWorld:
     def current_State(self):
         return self._currentState
 
-   # def instantiate(self, gameObject):
-   #    gameObject.awake(self)
-   #    gameObject.start()
-   #    self._gameObjects.append(gameObject)
-
-
     def Awake(self):
         self._currentState.awake(self)
         
-    
     def Start(self):      
         self._currentState.start()  
 
