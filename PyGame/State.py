@@ -105,5 +105,7 @@ class FirstLevelState(State):
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
 
+        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
         
             
