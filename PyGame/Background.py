@@ -8,7 +8,7 @@ class Background(Component):
     def __init__(self, game_world, image_path, scroll_speed) -> None:
         super().__init__()
         self._game_world = game_world
-        self._background_image = pygame.image.load(f"pyGame\\Assets\\ArcticAssets\\RunningBackgrounds\\{image_path}")
+        self._background_image = pygame.image.load(f"Assets\\ArcticAssets\\RunningBackgrounds\\{image_path}")
         self._scroll_speed = scroll_speed
         self._x_position = 0
 
