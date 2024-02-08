@@ -32,6 +32,13 @@ class Player(Component):
             movement.y -= speed
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             movement.y += speed
+
+        bottom_limit = self._screen_size.y - self._sprite_size.y
+        
+        if self._gameObject.transform.position.y > bottom_limit:
+            self._gameObject.transform.position.y = bottom_limit
+        elif self._gameObject.transform.position.y < 0:
+            self._gameObject.transform.position.y = 0
      
         if keys[pygame.K_COMMA] and self.shoot_timer >= self.shoot_delay:
             self.shoot()
