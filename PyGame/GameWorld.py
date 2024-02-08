@@ -21,7 +21,7 @@ class GameWorld:
     def screen(self):
         return self._screen
     
-    @property
+    @property 
     def current_State(self):
         return self._currentState
 
