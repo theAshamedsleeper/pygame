@@ -10,7 +10,7 @@ class GameWorld:
         self._running = True
         self._clock = pygame.time.Clock()
         menu = MenuState(self)
-        self._currentState = menu
+        self._currentState = menu 
         self._nextState = None
         self._newState = None
 
@@ -38,7 +38,7 @@ class GameWorld:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._running = False
-            delta_time = self._clock.tick(60) / 1000.0
+            delta_time = self._clock.tick(120) / 1000.0
 
             #drawing the game
             if self._nextState is not None:
@@ -47,7 +47,7 @@ class GameWorld:
             self._currentState.update(delta_time)
 
             pygame.display.flip()
-            self._clock.tick(60) # limits FPS to 60
+            self._clock.tick(120) # limits FPS to 60
 
         pygame.quit()
 
