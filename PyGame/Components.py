@@ -71,6 +71,8 @@ class SpriteRenderer(Component):
     def sprite_image(self, value):
         self._sprite_image = value      
     
+    
+
     def awake(self, game_world):
         self._game_world = game_world
         self._sprite.rect.topleft = self.gameObject.transform.position
@@ -133,3 +135,18 @@ class Animator(Component):
 
             # Update the sprite image
             self._sprite_renderer.sprite_image = animation_sequence[self._current_frame_index]
+
+class Laser(Component):
+    def awake(self, game_world):
+        pass
+    def start(self):
+        pass
+    def update(self, delta_time):
+
+        speed = 17
+        direction = pygame.math.Vector2(speed,0)
+        self._gameObject.transform.translate(direction)
+        
+        if self._gameObject.transform.position.x > 1290:
+            self._gameObject.destroy()
+            
