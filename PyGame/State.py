@@ -39,15 +39,16 @@ class MenuState(State):
         self._text_font = pygame.font.SysFont(None, 30, bold = False)
         self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
         self._menu_sele = 0
-        self._MENU_DELAY = 200
-        self.next_change_time = 0  
+        self._opt_menu_sel = 1 #0 for down, for mid, 2 for up
+        self._options_sele = False  
+        self._graphics_opt = 1      
 
 
         
     def hande_input(self):
         global _menu_sele
-        keys = pygame.key.get_pressed() 
-        time_now = pygame.time.get_ticks() # milliseconds elapsed time 
+        #keys = pygame.key.get_pressed() 
+        #time_now = pygame.time.get_ticks() # milliseconds elapsed time 
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -55,25 +56,37 @@ class MenuState(State):
                 quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.do_input()
+                    if self._options_sele == False:
+                        self.do_menu_input()
+                    elif self._options_sele == True:
+                        self._options_sele = False
                 elif event.key == pygame.K_UP:
                     self._menu_sele -= 1
                 elif event.key == pygame.K_DOWN:
                     self._menu_sele += 1
+                if self._options_sele == True:
+                    if event.key == pygame.K_LEFT:
+                        self.do_options_input(-1)
+                    elif event.key == pygame.K_RIGHT:
+                        self.do_options_input(1)
+
 
         # Clamp menu selection within range
         self._menu_sele = max(0, min(2, self._menu_sele))
-    def do_input(self):
+    def do_menu_input(self):
         match self._menu_sele:
-            case 0:
+            case 0:#new game
                 level = FirstLevelState(self._game_world)
                 self._game_world.ChangeToNewState(level)
-            case 1:
-                #Options
+            case 1:#Options
+                self._options_sele = True
                 pass
             case 2:
                 pygame.quit()
                 quit()
+    
+    def do_options_input(self,value):
+        pass
     
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
@@ -103,21 +116,44 @@ class MenuState(State):
         
     def drawing_menu(self):
         self.draw_text(f"{self._menu_sele}", self._text_font_sel, (0,0,0), 1000, 0)
-        
-        match self._menu_sele:
-            case 0:
-                self.draw_text("New Game", self._text_font_sel, (0,0,0), 600, 360)
-                self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
-                self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
-            case 1:
-                self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
-                self.draw_text("   Option", self._text_font_sel, (0,0,0), 600, 410)
-                self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
-            case 2:
-                self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
-                self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
-                self.draw_text("     Quit", self._text_font_sel, (0,0,0), 600, 460)
-        
+        if self._options_sele == False:
+            match self._menu_sele:
+                case 0:
+                    self.draw_text("New Game", self._text_font_sel, (0,0,0), 600, 360)
+                    self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
+                case 1:
+                    self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text("   Option", self._text_font_sel, (0,0,0), 600, 410)
+                    self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
+                case 2:
+                    self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("     Quit", self._text_font_sel, (0,0,0), 600, 460)
+        #Options
+        elif self._options_sele == True:
+            match self._menu_sele:
+                case 0:
+                    self.draw_text("Music", self._text_font_sel, (0,0,0), 600, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (0,0,0), 700, 360)
+                    self.draw_text("SFX", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (0,0,0), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 700, 460)
+                case 1:
+                    self.draw_text("Music", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (0,0,0), 700, 360)
+                    self.draw_text("SFX", self._text_font_sel, (0,0,0), 600, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font_sel, (0,0,0), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 700, 460)
+                case 2:
+                    self.draw_text("Music", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (0,0,0), 700, 360)
+                    self.draw_text("SFX", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (0,0,0), 700, 410)
+                    self.draw_text("Graphics", self._text_font_sel, (0,0,0), 600, 460)    
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (0,0,0), 700, 460)
 
 
 
