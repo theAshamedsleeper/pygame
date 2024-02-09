@@ -1,6 +1,7 @@
 import pygame
 from State import MenuState
 from State import FirstLevelState
+from State import loosOrVicState
 from GameObject import GameObject
 
 class GameWorld:
@@ -13,13 +14,15 @@ class GameWorld:
         self._running = True
         self._clock = pygame.time.Clock()
         self._clock.tick(60) 
-        menu = MenuState(self)
+        menu = loosOrVicState(self) ## Change this back to menu, just testing endscreen out -TB
         self._currentState = menu 
         self._nextState = None
         self._newState = None
         self._music_vol = 100
         self._SFX_vol = 100
         self._graphics = ["Low", "Medium", "High"]
+        
+        self._score = 0
 
     @property
     def screen(self):
@@ -41,6 +44,14 @@ class GameWorld:
     def Graphics(self):
         return self._graphics
     
+    @property 
+    def Score(self):
+        return self._score
+    
+    @Score.setter
+    def Score(self,value):
+        self._score = value
+        
     @music_volume.setter
     def music_volume(self,value):
         self._music_vol = value

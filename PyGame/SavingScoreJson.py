@@ -35,7 +35,7 @@ class SavingScore:
             json.dump(existing_data, file, indent=4)
 
     def print_score():
-       with open("ScoreBored.json", "r") as file:
+        with open("ScoreBored.json", "r") as file:
             existing_data = json.load(file)
             return existing_data
             

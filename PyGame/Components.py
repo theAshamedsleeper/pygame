@@ -106,7 +106,7 @@ class Animator(Component):
         self._current_animation = animation
 
     def awake(self, game_world):
-         self._sprite_renderer = self._gameObject.get_component("SpriteRenderer")
+        self._sprite_renderer = self._gameObject.get_component("SpriteRenderer")
 
     def start(self):
         pass

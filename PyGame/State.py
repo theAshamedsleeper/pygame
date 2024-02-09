@@ -7,6 +7,7 @@ from Components import Animator
 import pygame.locals
 import threading
 from Background import Background
+from SavingScoreJson import SavingScore
 
 class State(ABC):
 
@@ -39,9 +40,9 @@ class MenuState(State):
         self._text_font = pygame.font.SysFont(None, 30, bold = False)
         self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
         self._menu_sele = 0
-        self._opt_menu_sel = 1 #0 for down, for mid, 2 for up
+        self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
         self._options_sele = False  
-        self._graphics_opt = int(1)      
+        self._graphics_opt = 1      
 
 
         
@@ -185,9 +186,6 @@ class MenuState(State):
                     self.draw_text("Graphics", self._text_font_sel, (0,0,0), 600, 460)    
                     self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (0,0,0), 700, 460)
 
-
-
-
 class FirstLevelState(State):
 
     def __init__(self, game_world) -> None:
@@ -215,7 +213,7 @@ class FirstLevelState(State):
                                 # "player05.png",
                                 # "player04.png",
                                 # "player03.png"
-                               )
+                                )
         
         animator.play_animation("Idle")
         self._gameObjects.append(go)
@@ -249,5 +247,67 @@ class FirstLevelState(State):
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
+class loosOrVicState(State):
+    def __init__(self, game_world) -> None:
+        super().__init__(game_world)
+        self._dis = pygame.display.set_mode((1280, 720))
         
+        #uses the system font
+        self._text_font = pygame.font.SysFont(None, 30, bold = False)
+        self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
+        
+        self._score_holder = SavingScore
+        
+    
+    def draw_text(self,text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self._dis.blit(img,(x,y))
+
+    def drawing_menu(self):
+        self.draw_text("Score:", self._text_font, (0,0,0), 575, 20)
+        #displaing the player score
+        self.draw_text(f"{self._game_world.Score}", self._text_font_sel, (0,0,0), 650, 20)
+        self.draw_text("Name     Score", self._text_font, (0,0,0), 575, 65)
+        
+        y = 100 #Initial y-coordinate for drawing
+        
+        # Get the player data and sort based on scores
+        sorting = sorted(self._score_holder.print_score().items(), key=lambda x: int(x[1]["score"]), reverse=True)
+        i = 0
+        for name, player_data in sorting:
+            if i >= 10:
+                break
+            score = player_data["score"]
             
+            self.draw_text(f"{name}", self._text_font, (0,0,0), 580, y)
+            self.draw_text(f"{score}", self._text_font, (0,0,0), 670, y)
+            y += 35
+            i +=1
+        
+        
+        
+    def awake(self, game_world):
+        super().awake(game_world)
+        
+        #Testing score -TB
+        #self._score_holder.give_score("TB","500")
+        #self._score_holder.give_score("JK","700")
+        
+        for gameObject in self._gameObjects[:]:
+            gameObject.awake(self._game_world)   
+            
+            
+            
+    def start(self):
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gameObject in self._gameObjects[:]:
+            gameObject.start()
+            
+    def update(self, delta_time):
+        # fill the screen with a color to wipe away anything from last frame
+        self._game_world.screen.fill("lightcoral")
+        self.drawing_menu()
+
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gamObjects in self._gameObjects[:]:
+            gamObjects.update(delta_time)
