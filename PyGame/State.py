@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 import pygame
 from Player import Player
+from MotherShip import MotherShip
+from MotherShip import MShipPart
+from MotherShip import Turret
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
@@ -67,28 +70,23 @@ class FirstLevelState(State):
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
-        go = GameObject(pygame.math.Vector2(0,0))
-        go.add_component(SpriteRenderer("player_ship.png"))
-        go.add_component(Player())
-        animator = go.add_component(Animator())
+        go_mothership = GameObject(pygame.math.Vector2(0,0))
+        go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(MotherShip())
+        go_northship = GameObject(pygame.math.Vector2(0,0))
+        go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(MShipPart(0, 0))
+        go_mothership.get_component("MotherShip").add_ship_part(go_northship, 0)
 
-        animator.add_animation("Idle","player_ship.png",
-                                # "player03.png",
-                                # "player04.png",
-                                # "player05.png",
-                                # "player06.png",
-                                # "player07.png",
-                                # "player08.png",
-                                # "player07.png",
-                                # "player06.png",
-                                # "player05.png",
-                                # "player04.png",
-                                # "player03.png"
-                               )
+
+        go_player = GameObject(pygame.math.Vector2(0,0))
+        go_player.add_component(SpriteRenderer("player_ship.png"))
+        go_player.add_component(Player())
         
-        animator.play_animation("Idle")
-        self._gameObjects.append(go)
-        #self._gameObjects.append(self._background_go)
+        self._gameObjects.append(go_northship)
+        self._gameObjects.append(go_player)
+        self._gameObjects.append(go_mothership)
+
 
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)

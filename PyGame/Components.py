@@ -71,7 +71,13 @@ class SpriteRenderer(Component):
     def sprite_image(self, value):
         self._sprite_image = value      
     
+    @property
+    def sprite_rect(self):
+        return self._sprite.rect
     
+    @sprite_rect.setter
+    def sprite_rect(self, value):
+        self._sprite.rect = value
 
     def awake(self, game_world):
         self._game_world = game_world
