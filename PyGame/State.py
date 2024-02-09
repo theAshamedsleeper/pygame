@@ -62,7 +62,7 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         
-        self._background_image_path ="SimpleBackground.png"
+        self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 300
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
