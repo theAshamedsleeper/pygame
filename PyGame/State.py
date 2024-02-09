@@ -41,14 +41,12 @@ class MenuState(State):
         self._menu_sele = 0
         self._opt_menu_sel = 1 #0 for down, for mid, 2 for up
         self._options_sele = False  
-        self._graphics_opt = 1      
+        self._graphics_opt = int(1)      
 
 
         
     def hande_input(self):
         global _menu_sele
-        #keys = pygame.key.get_pressed() 
-        #time_now = pygame.time.get_ticks() # milliseconds elapsed time 
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -85,8 +83,37 @@ class MenuState(State):
                 pygame.quit()
                 quit()
     
-    def do_options_input(self,value):
-        pass
+    tmp = 1
+    def do_options_input(self, value):
+        self._opt_menu_sel += value
+        self._opt_menu_sel = max(0, min(2, self._opt_menu_sel))
+        self.tmp += value
+        self.tmp = max(0, min(2, self.tmp))
+
+        #Which option the player is on
+        match self._menu_sele:
+            case 0: #Music Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.music_volume += 10     
+                    if self._game_world.music_volume > 100:
+                        self._game_world.music_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.music_volume -= 10
+                    if self._game_world.music_volume < 0:
+                        self._game_world.music_volume = 0     
+            case 1: #sfx Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.SFX_volume += 10     
+                    if self._game_world.SFX_volume > 100:
+                        self._game_world.SFX_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.SFX_volume -= 10     
+                    if self._game_world.SFX_volume < 0:
+                        self._game_world.SFX_volume = 0     
+            case 2:#Grapchis options
+                self._graphics_opt = self.tmp
+        #Resets the pos to 1
+        self._opt_menu_sel = 1
     
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
@@ -95,7 +122,9 @@ class MenuState(State):
     def awake(self, game_world):
         super().awake(game_world)
         for gameObject in self._gameObjects[:]:
-            gameObject.awake(self._game_world)      
+            gameObject.awake(self._game_world)     
+#        self._game_world.Graphics = 1
+        #self._graphics_optr = 1
         #input_thread = threading.Thread(target=self.hande_input,args=())
         #input_thread.start()
 
@@ -116,6 +145,7 @@ class MenuState(State):
         
     def drawing_menu(self):
         self.draw_text(f"{self._menu_sele}", self._text_font_sel, (0,0,0), 1000, 0)
+        self.draw_text(f"{self._opt_menu_sel}", self._text_font_sel, (0,0,0), 1000, 50)
         if self._options_sele == False:
             match self._menu_sele:
                 case 0:
