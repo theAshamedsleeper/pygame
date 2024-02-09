@@ -33,7 +33,7 @@ class MenuState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
-        self._dis = pygame.display.set_mode((1280, 720))
+        self._dis = pygame.display.set_mode((3440, 1000))
         
         #uses the system font
         self._text_font = pygame.font.SysFont(None, 30, bold = False)

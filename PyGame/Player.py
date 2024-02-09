@@ -1,15 +1,19 @@
 from Components import Component
 import pygame
+from pygame import mixer
 from GameObject import GameObject
 from Components import Laser
 from Components import SpriteRenderer
 
 
 class Player(Component):
+
     def __init__(self):
         self.shoot_delay = 0.15
         self.shoot_timer = 0
-
+        self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
+        self.shoot_sound.set_volume(0.1)
+        
     def awake(self, game_world):
         self._game_world = game_world
         sr = self._gameObject.get_component("SpriteRenderer")
@@ -41,14 +45,18 @@ class Player(Component):
             self._gameObject.transform.position.y = 0
      
         if keys[pygame.K_SPACE] and self.shoot_timer >= self.shoot_delay:
+            
+           
             self.shoot()
             self.shoot_timer = 0 #resets cooldown after shoot()
-            
+ 
         self._gameObject.transform.translate(movement*delta_time)
 
         
+   # shoot_sfx = pygame.mixer.Sound("Assets\\Audio\\Pew.mp3")
 
     def shoot(self):
+        self.shoot_sound.play()
         projectile = GameObject(None)
         sr = projectile.add_component(SpriteRenderer("tile001.png"))
         projectile.add_component(Laser())

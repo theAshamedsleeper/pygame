@@ -138,7 +138,7 @@ class Animator(Component):
 
 class Laser(Component):
     def awake(self, game_world):
-        pass
+        self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
     def start(self):
         pass
     def update(self, delta_time):
@@ -147,6 +147,6 @@ class Laser(Component):
         direction = pygame.math.Vector2(speed,0)
         self._gameObject.transform.translate(direction)
         
-        if self._gameObject.transform.position.x > 1290:
+        if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
             
