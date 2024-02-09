@@ -12,10 +12,14 @@ class GameWorld:
         self._screen = pygame.display.set_mode((1280, 720))
         self._running = True
         self._clock = pygame.time.Clock()
+        self._clock.tick(60) 
         menu = MenuState(self)
-        self._currentState = menu
+        self._currentState = menu 
         self._nextState = None
         self._newState = None
+        self._music_vol = 100
+        self._SFX_vol = 100
+        self._graphics = ["Low", "Medium", "High"]
 
     @property
     def screen(self):
@@ -24,6 +28,30 @@ class GameWorld:
     @property 
     def current_State(self):
         return self._currentState
+    
+    @property
+    def music_volume(self):
+        return self._music_vol
+    
+    @property 
+    def SFX_volume(self):
+        return self._SFX_vol
+    
+    @property 
+    def Graphics(self):
+        return self._graphics
+    
+    @music_volume.setter
+    def music_volume(self,value):
+        self._music_vol = value
+        
+    @SFX_volume.setter
+    def SFX_volume(self,value):
+        self._SFX_vol = value
+        
+    @Graphics.setter
+    def Graphics(self,value):
+        self._graphics = value
 
     def Awake(self):
         self._currentState.awake(self)
@@ -45,7 +73,7 @@ class GameWorld:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._running = False
-            delta_time = self._clock.tick(120) / 1000.0
+            delta_time = self._clock.tick(60) / 1000.0 # limits FPS to 60
 
             #drawing the game
             if self._nextState is not None:
@@ -54,7 +82,6 @@ class GameWorld:
             self._currentState.update(delta_time)
 
             pygame.display.flip()
-            self._clock.tick(120) # limits FPS to 60
 
         pygame.quit()
 
