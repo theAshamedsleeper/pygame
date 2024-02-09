@@ -40,7 +40,7 @@ class Player(Component):
         elif self._gameObject.transform.position.y < 0:
             self._gameObject.transform.position.y = 0
      
-        if keys[pygame.K_COMMA] and self.shoot_timer >= self.shoot_delay:
+        if keys[pygame.K_SPACE] and self.shoot_timer >= self.shoot_delay:
             self.shoot()
             self.shoot_timer = 0 #resets cooldown after shoot()
             
