@@ -7,6 +7,7 @@ from Components import Animator
 import pygame.locals
 import threading
 from Background import Background
+from pygame import mixer
 
 class State(ABC):
 
@@ -202,6 +203,11 @@ class FirstLevelState(State):
         go.add_component(SpriteRenderer("player_ship.png"))
         go.add_component(Player())
         animator = go.add_component(Animator())
+
+
+        mixer.music.load("Assets\\Audio\\Background.mp3")
+        mixer.music.play(-1)
+        mixer.music.set_volume(.03)
 
         animator.add_animation("Idle","player_ship.png",
                                 # "player03.png",

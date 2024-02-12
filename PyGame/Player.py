@@ -12,7 +12,7 @@ class Player(Component):
         self.shoot_delay = 0.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
-        self.shoot_sound.set_volume(0.1)
+        self.shoot_sound.set_volume(0.04)
         
     def awake(self, game_world):
         self._game_world = game_world
@@ -53,7 +53,7 @@ class Player(Component):
         self._gameObject.transform.translate(movement*delta_time)
 
         
-   # shoot_sfx = pygame.mixer.Sound("Assets\\Audio\\Pew.mp3")
+   
 
     def shoot(self):
         self.shoot_sound.play()

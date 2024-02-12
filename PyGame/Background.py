@@ -1,4 +1,5 @@
 import pygame
+
 from Components import Component
 from GameObject import GameObject
 
