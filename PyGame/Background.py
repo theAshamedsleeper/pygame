@@ -15,7 +15,7 @@ class Background(Component):
         # Scale the background image to fit the screen size
         screen_width = self._game_world.screen.get_width()
         screen_height = self._game_world.screen.get_height()
-        scaled_width = screen_width * 2
+        scaled_width = screen_width * 4
         self._background_image = pygame.transform.scale(self._background_image, (scaled_width, screen_height))
 
     def awake(self, game_world):
@@ -29,9 +29,9 @@ class Background(Component):
         self._x_position -= self._scroll_speed * delta_time
 
         # If the background has scrolled past its width, reset its position
-        if self._x_position <= -self._background_image.get_width():
+        if self._x_position <= -self._background_image.get_width() / 2:
             self._x_position = 0
 
         # Draw the background image twice to cover the entire screen
         self._game_world.screen.blit(self._background_image, (self._x_position, 0))
-        self._game_world.screen.blit(self._background_image, (self._x_position + self._background_image.get_width(), 0))
+        #self._game_world.screen.blit(self._background_image, (self._x_position + self._background_image.get_width(), 0))

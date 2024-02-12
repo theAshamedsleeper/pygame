@@ -62,10 +62,19 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         
-        self._background_image_path ="SimpleBackgroundClear.png"
+
+        
+        self._background_image_path ="SimpleBackgroundDoubleClear.png"
         self._scroll_speed = 300
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
+
+        #self._middle_ground_image_path = "FloatingRocksTranss.png"
+        #self._middle_ground_scroll_speed = 200
+        #self._middle_ground_go = GameObject(position=(0, 0))
+        #self._middle_ground_go.add_component(Background(game_world, image_path=self._middle_ground_image_path, scroll_speed=self._middle_ground_scroll_speed))
+        
+
 
         go = GameObject(pygame.math.Vector2(0,0))
         go.add_component(SpriteRenderer("player_ship.png"))
@@ -111,6 +120,7 @@ class FirstLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
+        #self._middle_ground_go.update(delta_time)
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
