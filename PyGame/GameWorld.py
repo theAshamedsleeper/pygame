@@ -53,6 +53,7 @@ class GameWorld:
                 self._currentState = self._nextState
                 self._nextState = None
             self._currentState.update(delta_time)
+            
 
             pygame.display.flip()
             
