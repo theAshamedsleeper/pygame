@@ -149,4 +149,5 @@ class Laser(Component):
         
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
+            print("farvel")
             
