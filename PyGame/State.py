@@ -7,6 +7,8 @@ from Components import Animator
 import pygame.locals
 import threading
 from Background import Background
+from EnemyWell import EnemyWell
+
 
 class State(ABC):
 
@@ -192,7 +194,8 @@ class FirstLevelState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
-        
+
+        self._enemy_pool = EnemyWell(game_world, initial_size=10)
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 300
         self._background_go = GameObject(position=(0, 0))
@@ -234,8 +237,15 @@ class FirstLevelState(State):
 
     def start(self):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
+
         for gameObject in self._gameObjects[:]:
             gameObject.start()
+            self.spawn_enemies()
+
+    def spawn_enemies(self):
+        for _ in range(5):
+            enemy_go = self._enemy_pool.get_enemy()
+            self._gameObjects.append(enemy_go)
 
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
@@ -246,6 +256,10 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+        
+        for enemy_go in self._gameObjects:
+            if enemy_go.name == "Enemy" and not enemy_go.is_active:
+                self._enemy_pool.return_enemy(enemy_go)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 

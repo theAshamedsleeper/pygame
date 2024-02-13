@@ -16,6 +16,20 @@ class Component(ABC):
         self._gameObject = value
         
 
+    #Test-
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value):
+        self._active = value
+
+    @abstractmethod
+    def awake(self, game_world):
+        pass
+    #-Test
+
     @abstractmethod
     def awake(self,game_world):
         pass
