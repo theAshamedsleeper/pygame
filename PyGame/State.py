@@ -209,6 +209,10 @@ class FirstLevelState(State):
         self._fore_ground_go = GameObject(position=(0, 0))
         self._fore_ground_go.add_component(Background(game_world, image_path=self._fore_ground_image_path, scroll_speed=self._fore_ground_scroll_speed))
 
+        self._effect_ground_image_path = "DustClear.png"
+        self._effect_ground_scroll_speed = 2500
+        self._effect_ground_go = GameObject(position=(0, 0))
+        self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
@@ -272,6 +276,7 @@ class FirstLevelState(State):
         self._background_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
+        self._effect_ground_go.update(delta_time)
         
         
 
