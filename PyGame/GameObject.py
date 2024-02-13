@@ -10,10 +10,6 @@ class GameObject:
     @property
     def transform(self):
         return self._transform
-
-    @property
-    def is_destroyed(self):
-        return self._transform
     
     def destroy(self):
         self._is_destroyed = True

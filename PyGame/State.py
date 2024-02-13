@@ -9,8 +9,11 @@ from Components import SpriteRenderer
 from Components import Animator
 import pygame.locals
 import threading
+from pygame import mixer
 from Background import Background
+from MenuBackground import MenuBackground
 from SavingScoreJson import SavingScore
+
 
 class State(ABC):
 
@@ -39,6 +42,10 @@ class MenuState(State):
         super().__init__(game_world)
         self._dis = pygame.display.set_mode((1280, 720))
         
+        self._background_image_path ="MenuBackground.png"
+        self._background_go = GameObject(position=(0, 0))
+        self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
+
         #uses the system font
         self._text_font = pygame.font.SysFont(None, 30, bold = False)
         self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
@@ -127,10 +134,6 @@ class MenuState(State):
         super().awake(game_world)
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)     
-#        self._game_world.Graphics = 1
-        #self._graphics_optr = 1
-        #input_thread = threading.Thread(target=self.hande_input,args=())
-        #input_thread.start()
 
     def start(self):
         for gameObject in self._gameObjects[:]:
@@ -140,8 +143,11 @@ class MenuState(State):
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("cornflowerblue")
         #drawing the game
+        self._background_go.update(delta_time)
+
         self.drawing_menu()
         self.hande_input()
+
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -195,24 +201,14 @@ class FirstLevelState(State):
         super().__init__(game_world)
         
         self._background_image_path ="SimpleBackgroundClear.png"
-        self._scroll_speed = 50
+        self._scroll_speed = 300
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
-        self._middle_ground_image_path = "GravelTrans.png"
-        self._middle_ground_scroll_speed = 100
-        self._middle_ground_go = GameObject(position=(0, 0))
-        self._middle_ground_go.add_component(Background(game_world, image_path=self._middle_ground_image_path, scroll_speed=self._middle_ground_scroll_speed))
-
-        self._fore_ground_image_path = "SandTransNeutral.png"
-        self._fore_ground_scroll_speed = 150
-        self._fore_ground_go = GameObject(position=(0, 0))
-        self._fore_ground_go.add_component(Background(game_world, image_path=self._fore_ground_image_path, scroll_speed=self._fore_ground_scroll_speed))
-
-        self._effect_ground_image_path = "DustClear.png"
-        self._effect_ground_scroll_speed = 2500
-        self._effect_ground_go = GameObject(position=(0, 0))
-        self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
+      #  background_music = mixer
+        mixer.music.load("Assets\\Audio\\Background.mp3")
+        mixer.music.play(-1)
+        mixer.music.set_volume(.03)
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
@@ -274,11 +270,6 @@ class FirstLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
-        self._middle_ground_go.update(delta_time)
-        self._fore_ground_go.update(delta_time)
-        self._effect_ground_go.update(delta_time)
-        
-        
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
