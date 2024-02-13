@@ -1,8 +1,14 @@
 from Components import Component
+from Components import SpriteRenderer
+from Components import Animator
+from TurretLaser import TurretLaser
+from GameObject import GameObject
 import pygame
 import math
 
 class MotherShip(Component):
+    CURRENT_MOUSE = None
+    PREVIOUS_MOUSE = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -31,7 +37,13 @@ class MotherShip(Component):
         
 
     def update(self, delta_time):
-        pass
+        
+        self.PREVIOUS_MOUSE = self.CURRENT_MOUSE
+        self.CURRENT_MOUSE = pygame.mouse.get_pressed()
+        
+        if self.CURRENT_MOUSE[2] and not self.PREVIOUS_MOUSE[2]:  # Index 2 corresponds to the right mouse button
+            turret = self._turret_one.get_component("Turret")
+            turret.shoot()
 
     def add_ship_part(self, go, choice):
         if choice == 0:
@@ -103,4 +115,40 @@ class Turret(Component):
         rotated_image = pygame.transform.rotate(sr.og_sprite_image, self._rotation)
         sr.sprite_image = rotated_image
         sr.sprite_rect = sr.sprite_image.get_rect(center=sr.sprite_rect.center)
+        
+    def shoot(self):
+        mouse_pos = pygame.mouse.get_pos()
+        sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
+
+        dx = mouse_pos[0] - self._gameObject.transform.position.x
+        dy = mouse_pos[1] - self._gameObject.transform.position.y
+        magnitude = math.sqrt(dx ** 2 + dy ** 2)
+
+        if magnitude != 0:
+            dx /= magnitude
+            dy /= magnitude
+
+        direction = (dx, dy)
+        b_position = self._gameObject.transform.position + (direction)
+
+        for i in range(30):
+            b_position += (dx, dy)
+
+
+        go = GameObject(None)
+        go.add_component(TurretLaser(b_position, mouse_pos, direction))
+        go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
+        animator = go.add_component(Animator())
+
+        self._game_world.current_State.instantiate(go)
+
+        animator.add_animation("Effect", f"{sprite_path}tile001.png",
+                                    f"{sprite_path}tile002.png",
+                                    f"{sprite_path}tile003.png",
+                                    f"{sprite_path}tile004.png",
+                                    f"{sprite_path}tile005.png",
+                                    f"{sprite_path}tile006.png",)
+        
+        animator.play_animation("Effect")
+        
         

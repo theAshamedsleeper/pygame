@@ -150,10 +150,24 @@ class Animator(Component):
 
             # Loop the animation
             if self._current_frame_index >= len(animation_sequence):
-                self._current_frame_index = 0
+                self.is_on_final_frame()
+
+                # Do something when the animation loops back to the beginning
+                print("Animation looped")
 
             # Update the sprite image
             self._sprite_renderer.sprite_image = animation_sequence[self._current_frame_index]
+
+    def is_on_final_frame(self):
+        # Get the current animation sequence
+        animation_sequence = self._animations[self._current_animation]
+        # Check if the current frame index is at the last frame
+        is_final_frame = self._current_frame_index == len(animation_sequence) - 1
+        if is_final_frame:
+            # Reset the frame index to loop the animation
+            self._current_frame_index = 0
+        return is_final_frame
+    
 
 class Laser(Component):
     def awake(self, game_world):
