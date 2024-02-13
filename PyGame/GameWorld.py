@@ -13,9 +13,9 @@ class GameWorld:
         self._screen = pygame.display.set_mode((1280, 720))
         self._running = True
         self._clock = pygame.time.Clock()
-        self._clock.tick(60) 
-        menu = loosOrVicState(self) ## Change this back to menu, just testing endscreen out -TB
-        self._currentState = menu 
+        self._clock.tick(60)
+        menu = MenuState(self)
+        self._currentState = menu
         self._nextState = None
         self._newState = None
         self._music_vol = 100
@@ -91,8 +91,10 @@ class GameWorld:
                 self._currentState = self._nextState
                 self._nextState = None
             self._currentState.update(delta_time)
+            
 
             pygame.display.flip()
+            
 
         pygame.quit()
 

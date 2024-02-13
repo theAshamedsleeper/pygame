@@ -26,7 +26,8 @@ class Component(ABC):
 
     @abstractmethod
     def update(self, delta_time):
-        pass    
+        pass  
+      
 
 class Transform(Component):
 
@@ -61,7 +62,18 @@ class SpriteRenderer(Component):
         
         self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
         self._sprite = pygame.sprite.Sprite()
-        self._sprite.rect = self._sprite_image.get_rect()
+        image_width, image_height = self._sprite_image.get_size()
+        self._sprite.rect = pygame.Rect(0,0, image_width, image_height)
+        self._sprite.rect.center = (self._sprite.rect.width // 2, self._sprite.rect.height // 2)
+        self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        
+    @property
+    def og_sprite_image(self):
+        return self._og_sprite_image    
+    
+    @og_sprite_image.setter
+    def og_sprite_image(self, value):
+        self._og_sprite_image = value 
 
     @property
     def sprite_image(self):
@@ -71,17 +83,24 @@ class SpriteRenderer(Component):
     def sprite_image(self, value):
         self._sprite_image = value      
     
+    @property
+    def sprite_rect(self):
+        return self._sprite.rect
     
+    @sprite_rect.setter
+    def sprite_rect(self, value):
+        self._sprite.rect = value
 
     def awake(self, game_world):
         self._game_world = game_world
-        self._sprite.rect.topleft = self.gameObject.transform.position
+        self._sprite.rect.center = self.gameObject.transform.position
+        
 
     def start(self):
         pass
 
     def update(self, delta_time):
-        self._sprite.rect.topleft = self.gameObject.transform.position
+        self._sprite.rect.center = self.gameObject.transform.position
         self._game_world.screen.blit(self._sprite_image, self._sprite.rect)
 
 class Animator(Component):
