@@ -206,12 +206,12 @@ class FirstLevelState(State):
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
         self._middle_ground_image_path = "GravelTrans.png"
-        self._middle_ground_scroll_speed = 100
+        self._middle_ground_scroll_speed = 150
         self._middle_ground_go = GameObject(position=(0, 0))
         self._middle_ground_go.add_component(Background(game_world, image_path=self._middle_ground_image_path, scroll_speed=self._middle_ground_scroll_speed))
 
         self._fore_ground_image_path = "SandTransNeutral.png"
-        self._fore_ground_scroll_speed = 150
+        self._fore_ground_scroll_speed = 100
         self._fore_ground_go = GameObject(position=(0, 0))
         self._fore_ground_go.add_component(Background(game_world, image_path=self._fore_ground_image_path, scroll_speed=self._fore_ground_scroll_speed))
 
@@ -286,8 +286,9 @@ class FirstLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
-        self._middle_ground_go.update(delta_time)
+        
         self._fore_ground_go.update(delta_time)
+        self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
