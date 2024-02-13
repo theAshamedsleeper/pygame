@@ -10,7 +10,7 @@ class GameWorld:
         pygame.init()  
 
         self._gameObjects = []
-        self._screen = pygame.display.set_mode((1280, 720))
+        self._screen = pygame.display.set_mode((1280, 750))
         self._running = True
         self._clock = pygame.time.Clock()
         self._clock.tick(60)
