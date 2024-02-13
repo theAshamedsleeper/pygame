@@ -7,6 +7,7 @@ from Components import Animator
 import pygame.locals
 import threading
 from Background import Background
+from MenuBackground import MenuBackground
 from pygame import mixer
 
 class State(ABC):
@@ -35,6 +36,11 @@ class MenuState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self._dis = pygame.display.set_mode((1280, 750))
+
+        self._background_image_path ="MenuBackground.png"
+        self._background_go = GameObject(position=(0, 0))
+        self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
+
         
         #uses the system font
         self._text_font = pygame.font.SysFont(None, 30, bold = False)
@@ -43,7 +49,8 @@ class MenuState(State):
         self._opt_menu_sel = 1 #0 for down, for mid, 2 for up
         self._options_sele = False  
         self._graphics_opt = int(1)      
-
+        
+        
 
         
     def hande_input(self):
@@ -137,8 +144,10 @@ class MenuState(State):
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("cornflowerblue")
         #drawing the game
+        self._background_go.update(delta_time)
         self.drawing_menu()
         self.hande_input()
+       
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
