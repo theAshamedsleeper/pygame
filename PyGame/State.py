@@ -134,10 +134,6 @@ class MenuState(State):
         super().awake(game_world)
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)     
-#        self._game_world.Graphics = 1
-        #self._graphics_optr = 1
-        #input_thread = threading.Thread(target=self.hande_input,args=())
-        #input_thread.start()
 
     def start(self):
         for gameObject in self._gameObjects[:]:
