@@ -1,5 +1,4 @@
 import pygame
-
 from Components import Component
 from GameObject import GameObject
 
@@ -36,6 +35,5 @@ class Background(Component):
         # Draw the background image twice to cover the entire screen
         self._game_world.screen.blit(self._background_image, (self._x_position, 0))
         self._game_world.screen.blit(self._background_image, (self._x_position + self._background_image.get_width(), 0))
-
-
+        
     
