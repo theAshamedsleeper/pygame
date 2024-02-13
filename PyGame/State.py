@@ -205,7 +205,7 @@ class FirstLevelState(State):
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
-        self._middle_ground_image_path = "GravelTrans.png"
+        self._middle_ground_image_path = "GravelTransClearer.png"
         self._middle_ground_scroll_speed = 150
         self._middle_ground_go = GameObject(position=(0, 0))
         self._middle_ground_go.add_component(Background(game_world, image_path=self._middle_ground_image_path, scroll_speed=self._middle_ground_scroll_speed))
