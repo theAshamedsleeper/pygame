@@ -1,6 +1,8 @@
 import pygame
 from State import MenuState
 from State import FirstLevelState
+from State import SecondLevelState
+from State import ThirdLevelState
 from State import loosOrVicState
 from GameObject import GameObject
 
