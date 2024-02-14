@@ -16,7 +16,7 @@ class GameWorld:
         self._running = True
         self._clock = pygame.time.Clock()
         self._clock.tick(60)
-        menu = MenuState(self)
+        menu = ThirdLevelState(self)
         self._currentState = menu
         self._nextState = None
         self._newState = None

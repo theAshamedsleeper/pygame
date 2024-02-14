@@ -302,6 +302,8 @@ class FirstLevelState(State):
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
         
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -313,7 +315,16 @@ class FirstLevelState(State):
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
         turret.add_component(Turret())
-        return turret   
+        return turret 
+    
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont("Verdana", 15)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))  
     
 
 
@@ -323,6 +334,8 @@ class SecondLevelState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
+        self.clock = pygame.time.Clock()
+
         
         self._backgroundV2_image_path ="BackgroundV3.0.png"
         self._scroll_speed = 50
@@ -414,10 +427,10 @@ class SecondLevelState(State):
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("lightcoral")
 
-        self._background_go.update(delta_time)
-        self._fore_ground_go.update(delta_time)
-        self._middle_ground_go.update(delta_time)
-        self._effect_ground_go.update(delta_time)
+        self._backgroundV2_go.update(delta_time)
+        self._fore_groundV2_go.update(delta_time)
+        self._middle_groundV2_go.update(delta_time)
+        self._effect_groundV2_go.update(delta_time)
        # self.enemy_spawner.update(delta_time)
 
         self.fps_counter(self.clock, self._game_world.screen)
@@ -451,7 +464,8 @@ class ThirdLevelState(State): #Boss level
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
-        
+        self.clock = pygame.time.Clock()
+
         self._backgroundv3_image_path ="BackgroundV4.1.png"
         self._scroll_speed = 50
         self._backgroundv3_go = GameObject(position=(0, 0))
@@ -544,6 +558,9 @@ class ThirdLevelState(State): #Boss level
         self._fore_groundV3_go.update(delta_time)
         self._middle_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
+        
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -555,7 +572,16 @@ class ThirdLevelState(State): #Boss level
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
         turret.add_component(Turret())
-        return turret   
+        return turret 
+    
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont("Verdana", 15)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))  
 
 
 
