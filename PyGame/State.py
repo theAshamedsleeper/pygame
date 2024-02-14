@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import pygame
+import sys
 from Player import Player
 from MotherShip import MotherShip
 from MotherShip import MShipPart
@@ -199,7 +200,9 @@ class FirstLevelState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
-        
+        self.clock = pygame.time.Clock()
+
+
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 50
         self._background_go = GameObject(position=(0, 0))
@@ -290,6 +293,8 @@ class FirstLevelState(State):
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
 
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -303,6 +308,14 @@ class FirstLevelState(State):
         turret.add_component(Turret())
         return turret   
     
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont(None, 30)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))
     
 class loosOrVicState(State):
     def __init__(self, game_world) -> None:
