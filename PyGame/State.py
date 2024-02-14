@@ -44,16 +44,18 @@ class MenuState(State):
         self._background_image_path ="MenuBackground.png"
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
-
+        self._menu_sound = mixer.Sound("Assets\\Audio\\click.wav")
+        self._started_on_level = False
         #uses the system font
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
         #Selected
         self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 30)
+        
         self._menu_sele = 0
+        self._graphics_opt = 1      
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
         self._options_sele = False  
-        self._graphics_opt = 1      
 
 
         
@@ -67,33 +69,47 @@ class MenuState(State):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if self._options_sele == False:
+                        self._menu_sound.play()
+                        self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                         self.do_menu_input()
                     elif self._options_sele == True:
                         self._options_sele = False
                 elif event.key == pygame.K_UP:
                     self._menu_sele -= 1
+                    self._menu_sound.play()
+                    self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                 elif event.key == pygame.K_DOWN:
                     self._menu_sele += 1
+                    self._menu_sound.play()
+                    self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                 if self._options_sele == True:
                     if event.key == pygame.K_LEFT:
+                        self._menu_sound.play()
                         self.do_options_input(-1)
+                        self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                     elif event.key == pygame.K_RIGHT:
+                        self._menu_sound.play()
                         self.do_options_input(1)
+                        self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
 
 
         # Clamp menu selection within range
-        self._menu_sele = max(0, min(2, self._menu_sele))
+        self._menu_sele = max(0, min(3, self._menu_sele))
+        
     def do_menu_input(self):
         match self._menu_sele:
             case 0:#new game
+                self._game_world.start_game  = True
                 level = FirstLevelState(self._game_world)
                 self._game_world.ChangeToNewState(level)
-            case 1:#Options
+            case 1:
+                if self._game_world.start_game == True:
+                    self._game_world.ChangeState(FirstLevelState(self._game_world))
+            case 2:#Options
                 self._options_sele = True
-                pass
-            case 2:
+            case 3:
                 pygame.quit()
-                quit()
+                quit()    
     
     tmp = 1
     def do_options_input(self, value):
@@ -133,6 +149,7 @@ class MenuState(State):
 
     def awake(self, game_world):
         super().awake(game_world)
+        
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)     
 
@@ -161,16 +178,24 @@ class MenuState(State):
             match self._menu_sele:
                 case 0:
                     self.draw_text("New Game", self._text_font_sel, (0,0,0), 600, 360)
-                    self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
-                    self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text("  Continue", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("    Option", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text("      Quit", self._text_font, (0,0,0), 600, 510)
                 case 1:
                     self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
-                    self.draw_text("   Option", self._text_font_sel, (0,0,0), 600, 410)
-                    self.draw_text("     Quit", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text("  Continue", self._text_font_sel, (0,0,0), 600, 410)
+                    self.draw_text("    Option", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text("      Quit", self._text_font, (0,0,0), 600, 510)
                 case 2:
                     self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
-                    self.draw_text("   Option", self._text_font, (0,0,0), 600, 410)
-                    self.draw_text("     Quit", self._text_font_sel, (0,0,0), 600, 460)
+                    self.draw_text("  Continue", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("    Option", self._text_font_sel, (0,0,0), 600, 460)
+                    self.draw_text("      Quit", self._text_font, (0,0,0), 600, 510)
+                case 3:
+                    self.draw_text("New Game", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text("  Continue", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("    Option", self._text_font, (0,0,0), 600, 460)
+                    self.draw_text("      Quit", self._text_font_sel, (0,0,0), 600, 510)
         #Options
         elif self._options_sele == True:
             match self._menu_sele:
@@ -201,6 +226,7 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self._player_score = 0
+        self._game_paused = False
         
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 50
@@ -224,9 +250,9 @@ class FirstLevelState(State):
 
 
         # background_music = mixer
-        mixer.music.load("Assets\\Audio\\Background.mp3")
-        mixer.music.play(-1)
-        mixer.music.set_volume(.03)
+        self._music = mixer.music.load("Assets\\Audio\\Background.mp3")
+        self._music = mixer.music.play(-1)
+        self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
@@ -282,6 +308,15 @@ class FirstLevelState(State):
         self._game_world.score = self._player_score
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
     
+    def pause_game(self):
+        while self._game_paused == True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        self._game_paused = False
 
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
@@ -292,6 +327,17 @@ class FirstLevelState(State):
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
+    
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self._game_paused = True
+                    self.pause_game()
+                #   self._music = mixer.music.stop()
+                #    self._game_world.ChangeState(MenuState(self._game_world))
         
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
