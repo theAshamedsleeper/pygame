@@ -14,6 +14,10 @@ from pygame import mixer
 from Background import Background
 from MenuBackground import MenuBackground
 from SavingScoreJson import SavingScore
+#from Enemy import EnemySpawner
+from Enemy import Enemy
+
+
 
 
 class State(ABC):
@@ -201,6 +205,7 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+       # self.enemy_spawner = EnemySpawner(game_world)
 
 
         self._background_image_path ="SimpleBackgroundClear.png"
@@ -255,12 +260,16 @@ class FirstLevelState(State):
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_178.png"))
+        go_enemy.add_component(Enemy())
         
         
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_player)
+        self._gameObjects.append(go_enemy)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
         self._gameObjects.append(go_turret_two)
@@ -289,10 +298,11 @@ class FirstLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
-        
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
+       # self.enemy_spawner.update(delta_time)
+
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
 
