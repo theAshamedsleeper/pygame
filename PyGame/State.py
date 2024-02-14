@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import pygame
+import sys
 from Player import Player
 from MotherShip import MotherShip
 from MotherShip import MShipPart
@@ -13,6 +14,10 @@ from pygame import mixer
 from Background import Background
 from MenuBackground import MenuBackground
 from SavingScoreJson import SavingScore
+#from Enemy import EnemySpawner
+from Enemy import Enemy
+
+
 
 
 class State(ABC):
@@ -225,6 +230,10 @@ class FirstLevelState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
+        self.clock = pygame.time.Clock()
+       # self.enemy_spawner = EnemySpawner(game_world)
+
+
         self._player_score = 0
         self._game_paused = False
         
@@ -289,6 +298,7 @@ class FirstLevelState(State):
         self._gameObjects.append(go_turret_four)
 
 
+
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
         gameObject.start()
@@ -338,7 +348,140 @@ class FirstLevelState(State):
                     self.pause_game()
                 #   self._music = mixer.music.stop()
                 #    self._game_world.ChangeState(MenuState(self._game_world))
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
         
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gamObjects in self._gameObjects[:]:
+            gamObjects.update(delta_time)
+
+        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
+    def makeTurret(self, string):
+        turret = GameObject(pygame.math.Vector2(0,0))
+        turret.add_component(SpriteRenderer(string))
+        turret.add_component(Turret())
+        return turret 
+    
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont("Verdana", 15)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))  
+    
+
+
+
+    
+class SecondLevelState(State):  
+
+    def __init__(self, game_world) -> None:
+        super().__init__(game_world)
+        self.clock = pygame.time.Clock()
+
+        
+        self._backgroundV2_image_path ="BackgroundV3.0.png"
+        self._scroll_speed = 50
+        self._backgroundV2_go = GameObject(position=(0, 0))
+        self._backgroundV2_go.add_component(Background(game_world, image_path=self._backgroundV2_image_path, scroll_speed=self._scroll_speed))
+
+        self._middle_groundV2_image_path = "MiddlegroundCloudsV3.0.png"
+        self._middle_groundV2_scroll_speed = 150
+        self._middle_groundV2_go = GameObject(position=(0, 0))
+        self._middle_groundV2_go.add_component(Background(game_world, image_path=self._middle_groundV2_image_path, scroll_speed=self._middle_groundV2_scroll_speed))
+
+        self._fore_groundV2_image_path = "ForegroundCloudsV3.0.png"
+        self._fore_groundV2_scroll_speed = 100
+        self._fore_groundV2_go = GameObject(position=(0, 0))
+        self._fore_groundV2_go.add_component(Background(game_world, image_path=self._fore_groundV2_image_path, scroll_speed=self._fore_groundV2_scroll_speed))
+
+        self._effect_groundV2_image_path = "DustClear.png"
+        self._effect_groundV2_scroll_speed = 2500
+        self._effect_groundV2_go = GameObject(position=(0, 0))
+        self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
+
+
+        # background_music = mixer
+        mixer.music.load("Assets\\Audio\\Background.mp3")
+        mixer.music.play(-1)
+        mixer.music.set_volume(.03)
+
+        go_mothership = GameObject(pygame.math.Vector2(0,0))
+        go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(MotherShip())
+        go_northship = GameObject(pygame.math.Vector2(0,0))
+        go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(MShipPart(0))
+        go_southship = GameObject(pygame.math.Vector2(0,0))
+        go_southship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_southship.add_component(MShipPart(180))
+        go_turret_one = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_two = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_three = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_four = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        
+        go_mothership.get_component("MotherShip").add_ship_part(go_northship, 0)
+        go_mothership.get_component("MotherShip").add_ship_part(go_southship, 1)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_one, 0)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_two, 1)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_three, 2)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_four, 3)
+        
+
+
+        go_player = GameObject(pygame.math.Vector2(0,0))
+        go_player.add_component(SpriteRenderer("player_ship.png"))
+        go_player.add_component(Player())
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_178.png"))
+        go_enemy.add_component(Enemy())
+        
+        
+        
+        self._gameObjects.append(go_southship)
+        self._gameObjects.append(go_northship)
+        self._gameObjects.append(go_player)
+        self._gameObjects.append(go_enemy)
+        self._gameObjects.append(go_mothership)
+        self._gameObjects.append(go_turret_one)
+        self._gameObjects.append(go_turret_two)
+        self._gameObjects.append(go_turret_three)
+        self._gameObjects.append(go_turret_four)
+
+
+
+    def instantiate(self, gameObject):
+        gameObject.awake(self._game_world)
+        gameObject.start()
+        self._gameObjects.append(gameObject)
+
+    def awake(self, game_world):
+        super().awake(game_world)
+        
+        for gameObject in self._gameObjects[:]:
+            gameObject.awake(self._game_world)        
+
+    def start(self):
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gameObject in self._gameObjects[:]:
+            gameObject.start()
+
+    def update(self, delta_time):
+        # fill the screen with a color to wipe away anything from last frame
+        self._game_world.screen.fill("lightcoral")
+
+        self._backgroundV2_go.update(delta_time)
+        self._fore_groundV2_go.update(delta_time)
+        self._middle_groundV2_go.update(delta_time)
+        self._effect_groundV2_go.update(delta_time)
+       # self.enemy_spawner.update(delta_time)
+
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
@@ -351,6 +494,146 @@ class FirstLevelState(State):
         turret.add_component(Turret())
         return turret   
     
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont("Verdana", 15)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))
+
+        
+
+
+class ThirdLevelState(State): #Boss level
+
+    def __init__(self, game_world) -> None:
+        super().__init__(game_world)
+        self.clock = pygame.time.Clock()
+
+        self._backgroundv3_image_path ="BackgroundV4.1.png"
+        self._scroll_speed = 50
+        self._backgroundv3_go = GameObject(position=(0, 0))
+        self._backgroundv3_go.add_component(Background(game_world, image_path=self._backgroundv3_image_path, scroll_speed=self._scroll_speed))
+
+        self._middle_groundV3_image_path = "SandBlackDensest.png"
+        self._middle_groundV3_scroll_speed = 150
+        self._middle_groundV3_go = GameObject(position=(0, 0))
+        self._middle_groundV3_go.add_component(Background(game_world, image_path=self._middle_groundV3_image_path, scroll_speed=self._middle_groundV3_scroll_speed))
+
+        self._fore_groundV3_image_path = "ForegroundBlackCloudDense.png"
+        self._fore_groundV3_scroll_speed = 100
+        self._fore_groundV3_go = GameObject(position=(0, 0))
+        self._fore_groundV3_go.add_component(Background(game_world, image_path=self._fore_groundV3_image_path, scroll_speed=self._fore_groundV3_scroll_speed))
+
+
+        self._effect_groundv3_image_path = "DustBlack.png"
+        self._effect_groundv3_scroll_speed = 2500
+        self._effect_groundv3_go = GameObject(position=(0, 0))
+        self._effect_groundv3_go.add_component(Background(game_world, image_path=self._effect_groundv3_image_path, scroll_speed=self._effect_groundv3_scroll_speed))
+
+
+        # background_music = mixer
+        mixer.music.load("Assets\\Audio\\Background.mp3")
+        mixer.music.play(-1)
+        mixer.music.set_volume(.03)
+
+        go_mothership = GameObject(pygame.math.Vector2(0,0))
+        go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(MotherShip())
+        go_northship = GameObject(pygame.math.Vector2(0,0))
+        go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(MShipPart(0))
+        go_southship = GameObject(pygame.math.Vector2(0,0))
+        go_southship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_southship.add_component(MShipPart(180))
+        go_turret_one = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_two = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_three = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        go_turret_four = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
+        
+        go_mothership.get_component("MotherShip").add_ship_part(go_northship, 0)
+        go_mothership.get_component("MotherShip").add_ship_part(go_southship, 1)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_one, 0)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_two, 1)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_three, 2)
+        go_mothership.get_component("MotherShip").add_turret_part(go_turret_four, 3)
+        
+
+
+        go_player = GameObject(pygame.math.Vector2(0,0))
+        go_player.add_component(SpriteRenderer("player_ship.png"))
+        go_player.add_component(Player())
+        
+        
+        
+        self._gameObjects.append(go_southship)
+        self._gameObjects.append(go_northship)
+        self._gameObjects.append(go_player)
+        self._gameObjects.append(go_mothership)
+        self._gameObjects.append(go_turret_one)
+        self._gameObjects.append(go_turret_two)
+        self._gameObjects.append(go_turret_three)
+        self._gameObjects.append(go_turret_four)
+
+
+
+    def instantiate(self, gameObject):
+        gameObject.awake(self._game_world)
+        gameObject.start()
+        self._gameObjects.append(gameObject)
+
+    def awake(self, game_world):
+        super().awake(game_world)
+        
+        for gameObject in self._gameObjects[:]:
+            gameObject.awake(self._game_world)        
+
+    def start(self):
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gameObject in self._gameObjects[:]:
+            gameObject.start()
+
+    def update(self, delta_time):
+        # fill the screen with a color to wipe away anything from last frame
+        self._game_world.screen.fill("lightcoral")
+
+        self._backgroundv3_go.update(delta_time)
+        
+        self._fore_groundV3_go.update(delta_time)
+        self._middle_groundV3_go.update(delta_time)
+        self._effect_groundv3_go.update(delta_time)
+        
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+
+        #Makes a copy om _gameObjects and runs through that instead of the orginal
+        for gamObjects in self._gameObjects[:]:
+            gamObjects.update(delta_time)
+
+        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
+    def makeTurret(self, string):
+        turret = GameObject(pygame.math.Vector2(0,0))
+        turret.add_component(SpriteRenderer(string))
+        turret.add_component(Turret())
+        return turret 
+    
+    def fps_counter(self, clock, screen):
+        BLACK = (255, 255, 255)
+        WHITE= (0, 0, 0)
+        fps = int(clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        font = pygame.font.SysFont("Verdana", 15)
+        text_surface = font.render(fps_text, True, BLACK)
+        screen.blit(text_surface,(10, 10))  
+
+
+
+
+
+
     
 class loosOrVicState(State):
     def __init__(self, game_world) -> None:

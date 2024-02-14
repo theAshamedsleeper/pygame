@@ -38,22 +38,19 @@ class Player(Component):
             movement.y += speed
 
         bottom_limit = self._screen_size.y - self._sprite_size.y
-        
+
+        #Player boundries for top and bottom of screen
         if self._gameObject.transform.position.y > bottom_limit:
             self._gameObject.transform.position.y = bottom_limit
-        elif self._gameObject.transform.position.y < 0:
-            self._gameObject.transform.position.y = 0
+        elif self._gameObject.transform.position.y < 20:
+            self._gameObject.transform.position.y = 20
      
         if keys[pygame.K_SPACE] and self.shoot_timer >= self.shoot_delay:
             
-           
             self.shoot()
             self.shoot_timer = 0 #resets cooldown after shoot()
  
         self._gameObject.transform.translate(movement*delta_time)
-
-        
-   
 
     def shoot(self):
         self.shoot_sound.play()
