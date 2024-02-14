@@ -313,7 +313,7 @@ class FirstLevelState(State):
         WHITE= (0, 0, 0)
         fps = int(clock.get_fps())
         fps_text = f"FPS: {fps}"
-        font = pygame.font.SysFont(None, 30)
+        font = pygame.font.SysFont("Verdana", 15)
         text_surface = font.render(fps_text, True, BLACK)
         screen.blit(text_surface,(10, 10))
     
