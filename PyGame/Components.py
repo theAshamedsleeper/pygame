@@ -57,15 +57,23 @@ class Transform(Component):
 
 class SpriteRenderer(Component):
     
-    def __init__(self,sprite_name) -> None:
+    def __init__(self, sprite_name=None, sprite_image=None) -> None:
         super().__init__()
         
-        self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        if sprite_image is None:
+            self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        else:
+            self._sprite_image = sprite_image
+        
         self._sprite = pygame.sprite.Sprite()
         image_width, image_height = self._sprite_image.get_size()
         self._sprite.rect = pygame.Rect(0,0, image_width, image_height)
         self._sprite.rect.center = (self._sprite.rect.width // 2, self._sprite.rect.height // 2)
-        self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        
+        if sprite_name is not None:
+            self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+        else:
+            self._og_sprite_image = sprite_image
         
     @property
     def og_sprite_image(self):
@@ -111,6 +119,19 @@ class Animator(Component):
         self._current_animation = None
         self._animation_time = 0
         self._current_frame_index = 0
+        self._frame_duration = 0.05
+
+    @property
+    def animations(self):
+        return self._animations
+    
+    @property
+    def frame_duration(self):
+        return self._frame_duration
+    
+    @frame_duration.setter
+    def frame_duration(self, value):
+        self._frame_duration = value
 
 
     def add_animation(self, name, *args):
@@ -120,6 +141,9 @@ class Animator(Component):
             frames.append(sprite_image)
 
         self._animations[name] = frames
+
+    def add_loaded_animation(self, name, animation):
+        self._animations[name] = animation
 
     def play_animation(self, animation):
         self._current_animation = animation
@@ -131,14 +155,12 @@ class Animator(Component):
         pass
 
     def update(self, delta_time):
-        # Time per frame in seconds (adjust as needed)
-        frame_duration = 0.05
 
         # Update the time accumulator
         self._animation_time += delta_time
 
         # Check if it's time to update the frame
-        if self._animation_time >= frame_duration:
+        if self._animation_time >= self._frame_duration:
             # Reset the time accumulator
             self._animation_time = 0
 
@@ -150,10 +172,25 @@ class Animator(Component):
 
             # Loop the animation
             if self._current_frame_index >= len(animation_sequence):
-                self._current_frame_index = 0
+                self.is_on_final_frame()
+
 
             # Update the sprite image
             self._sprite_renderer.sprite_image = animation_sequence[self._current_frame_index]
+
+    def is_on_second_frame(self):
+        return self._current_frame_index == 1
+
+    def is_on_final_frame(self):
+        # Get the current animation sequence
+        animation_sequence = self._animations[self._current_animation]
+        # Check if the current frame index is at the last frame
+        is_final_frame = self._current_frame_index == len(animation_sequence) - 1
+        if is_final_frame:
+            # Reset the frame index to loop the animation
+            self._current_frame_index = 0
+        return is_final_frame
+    
 
 class Laser(Component):
     def awake(self, game_world):
