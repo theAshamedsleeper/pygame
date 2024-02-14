@@ -24,7 +24,6 @@ class GameWorld:
         self._SFX_vol = 100
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
-        
         self._score = 0
 
     @property
