@@ -140,8 +140,6 @@ class Turret(Component):
         go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
         animator = go.add_component(Animator())
 
-        self._game_world.current_State.instantiate(go)
-
         animator.add_animation("Effect", f"{sprite_path}tile001.png",
                                     f"{sprite_path}tile002.png",
                                     f"{sprite_path}tile003.png",
@@ -150,5 +148,7 @@ class Turret(Component):
                                     f"{sprite_path}tile006.png",)
         
         animator.play_animation("Effect")
+
+        self._game_world.current_State.instantiate(go)
         
         
