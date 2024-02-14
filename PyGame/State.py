@@ -41,14 +41,15 @@ class MenuState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self._dis = pygame.display.set_mode((1280, 720))
-        
         self._background_image_path ="MenuBackground.png"
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
 
         #uses the system font
-        self._text_font = pygame.font.SysFont(None, 30, bold = False)
-        self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
+        #not selected
+        self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
+        #Selected
+        self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 30)
         self._menu_sele = 0
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
         self._options_sele = False  
@@ -174,31 +175,32 @@ class MenuState(State):
         elif self._options_sele == True:
             match self._menu_sele:
                 case 0:
-                    self.draw_text("Music", self._text_font_sel, (0,0,0), 600, 360)
-                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (0,0,0), 700, 360)
-                    self.draw_text("SFX", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("Music", self._text_font_sel, (0,0,0), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (0, 0,0), 700, 360)
+                    self.draw_text("SFX", self._text_font, (0,0,0), 500, 410)
                     self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (0,0,0), 700, 410)
-                    self.draw_text("Graphics", self._text_font, (0,0,0), 600, 460)
-                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 700, 460)
+                    self.draw_text("Graphics", self._text_font, (0,0,0), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 750, 460)
                 case 1:
-                    self.draw_text("Music", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text("Music", self._text_font, (0,0,0), 500, 360)
                     self.draw_text(f"{self._game_world.music_volume}", self._text_font, (0,0,0), 700, 360)
-                    self.draw_text("SFX", self._text_font_sel, (0,0,0), 600, 410)
+                    self.draw_text("SFX", self._text_font_sel, (0,0,0), 500, 410)
                     self.draw_text(f"{self._game_world.SFX_volume}", self._text_font_sel, (0,0,0), 700, 410)
-                    self.draw_text("Graphics", self._text_font, (0,0,0), 600, 460)
-                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 700, 460)
+                    self.draw_text("Graphics", self._text_font, (0,0,0), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (0,0,0), 750, 460)
                 case 2:
-                    self.draw_text("Music", self._text_font, (0,0,0), 600, 360)
+                    self.draw_text("Music", self._text_font, (0,0,0), 500, 360)
                     self.draw_text(f"{self._game_world.music_volume}", self._text_font, (0,0,0), 700, 360)
-                    self.draw_text("SFX", self._text_font, (0,0,0), 600, 410)
+                    self.draw_text("SFX", self._text_font, (0,0,0), 500, 410)
                     self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (0,0,0), 700, 410)
-                    self.draw_text("Graphics", self._text_font_sel, (0,0,0), 600, 460)    
-                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (0,0,0), 700, 460)
+                    self.draw_text("Graphics", self._text_font_sel, (0,0,0), 500, 460)    
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (0,0,0), 750, 460)
 
 class FirstLevelState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
+        self._player_score = 0
         
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 50
@@ -247,13 +249,9 @@ class FirstLevelState(State):
         go_mothership.get_component("MotherShip").add_turret_part(go_turret_three, 2)
         go_mothership.get_component("MotherShip").add_turret_part(go_turret_four, 3)
         
-
-
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
-        
-        
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
@@ -272,7 +270,6 @@ class FirstLevelState(State):
 
     def awake(self, game_world):
         super().awake(game_world)
-        
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)        
 
@@ -280,6 +277,11 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gameObject in self._gameObjects[:]:
             gameObject.start()
+
+    def move_to_endscreen(self):
+        self._game_world.score = self._player_score
+        self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
+    
 
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
@@ -290,7 +292,7 @@ class FirstLevelState(State):
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
-
+        
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
@@ -309,10 +311,12 @@ class loosOrVicState(State):
         super().__init__(game_world)             
         self._dis = pygame.display.set_mode((1280, 720))
         
-        #uses the system font
-        self._text_font = pygame.font.SysFont(None, 30, bold = False)
-        self._text_font_sel = pygame.font.SysFont(None, 30, bold = True)
-        self._text_font_write_name = pygame.font.SysFont(None, 50, bold = False)
+                #not selected
+        self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
+        #Selected
+        self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 30)
+
+        self._text_font_write_name = pygame.font.Font("Assets\\Font\\ARCADE_N.TTF", 30)
         self._player_name = ""
         self._writen_name = False
         self._read_Json = False
@@ -321,44 +325,48 @@ class loosOrVicState(State):
         self._score_holder = SavingScore
         self._menu_sele = 0
     
-    def draw_text(self,text, font, text_col, x, y):
+    def draw_text(self, text, font, text_col, x, y):
         img = font.render(text, True, text_col)
         self._dis.blit(img,(x,y))
 
     def write_player_name(self):
-        self.draw_text("Your score:", self._text_font, (0,0,0), 500, 20)
-        self.draw_text(f"{self._game_world.Score}", self._text_font_sel, (0,0,0), 650, 20)
-        self.draw_text("Write your desired name", self._text_font, (0,0,0), 500, 50)
-        self.draw_text(f"{self._player_name}", self._text_font_write_name, (0,0,0), 500, 150)
-        self.draw_text("Press enter when you're happy with your name", self._text_font, (0,0,0), 450, 250)
+        self.draw_text("Your score:", self._text_font, (0,0,0), 300, 30)
+        self.draw_text(f"{self._game_world.Score}", self._text_font, (0,0,0), 650, 30)
+        self.draw_text("Write your desired name", self._text_font, (0,0,0), 300, 80)
+        self.draw_text(f"{self._player_name}", self._text_font_write_name, (0,0,0), 350, 180)
+        self.draw_text("Press       to continue", self._text_font, (0,0,0), 300, 280)
+        self.draw_text("      enter            ", self._text_font_sel, (139,0,139), 300, 280)
         
     def drawing_endscreen(self):
-        self.draw_text("Score:", self._text_font, (0,0,0), 575, 20)
-        #displaing the player score
-        self.draw_text(f"{self._game_world.Score}", self._text_font_sel, (0,0,0), 650, 20)
-        self.draw_text("Name     Score", self._text_font, (0,0,0), 575, 65)
-        self.draw_text("Restart", self._text_font, (0,0,0), 500, 500)        
-        self.draw_text("Main Menu", self._text_font, (0,0,0), 700, 500)        
+        self.draw_text("Score:", self._text_font, (0,0,0), 500, 20)
+        #displaying the player score
+        self.draw_text(f"{self._game_world.Score}", self._text_font, (0,0,0), 700, 20)
+        self.draw_text("Name:        Score:", self._text_font, (0,0,0), 400, 65)
+        if self._menu_sele == 0:
+            self.draw_text("Restart", self._text_font, (0,0,0), 300, 600)        
+            self.draw_text("Main Menu", self._text_font, (0,0,0), 700, 600)        
         match self._menu_sele:
             case -1:#Restart the game
-                self.draw_text("Restart", self._text_font_sel, (0,0,0), 500, 500)        
+                self.draw_text("Restart", self._text_font_sel, (0,0,0), 300, 600)        
+                self.draw_text("Main Menu", self._text_font, (0,0,0), 700, 600)        
             case 2:#Head to main menu
-                self.draw_text("Main Menu", self._text_font_sel, (0,0,0), 700, 500)        
+                self.draw_text("Main Menu", self._text_font_sel, (0,0,0), 700, 600)        
+                self.draw_text("Restart", self._text_font, (0,0,0), 300, 600)        
                 
-        y = 100 #Initial y-coordinate for drawing
+        y = 125 #Initial y-coordinate for drawing
         if self._read_Json == False:
             # Get the player data and sort based on scores
             self._sorting = sorted(self._score_holder.print_score().items(), key=lambda x: int(x[1]["score"]), reverse=True)
             self._read_Json = True
         i = 0
         for name, player_data in self._sorting:
-            if i >= 10:
+            if i >= 8:
                 break
             score = player_data["score"]
                 
-            self.draw_text(f"{name}", self._text_font, (0,0,0), 580, y)
-            self.draw_text(f"{score}", self._text_font, (0,0,0), 670, y)
-            y += 35
+            self.draw_text(f"{name}", self._text_font, (0,0,0), 400, y)
+            self.draw_text(f"{score}", self._text_font, (0,0,0), 825, y)
+            y += 50
             i +=1
 
     def handle_input(self):
