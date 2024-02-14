@@ -300,8 +300,7 @@ class FirstLevelState(State):
         self._background_go.update(delta_time)
         
         self._fore_ground_go.update(delta_time)
-        self._middle_ground_go.update(delta_time)
-        self._effect_ground_go.update(delta_time)
+        
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
         
@@ -310,6 +309,8 @@ class FirstLevelState(State):
             gamObjects.update(delta_time)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+        self._middle_ground_go.update(delta_time)
+        self._effect_ground_go.update(delta_time)
 
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
@@ -428,9 +429,8 @@ class SecondLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._backgroundV2_go.update(delta_time)
-        self._fore_groundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
-        self._effect_groundV2_go.update(delta_time)
+        
        # self.enemy_spawner.update(delta_time)
 
         self.fps_counter(self.clock, self._game_world.screen)
@@ -441,6 +441,8 @@ class SecondLevelState(State):
             gamObjects.update(delta_time)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+        self._fore_groundV2_go.update(delta_time)
+        self._effect_groundV2_go.update(delta_time)
 
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
@@ -565,8 +567,7 @@ class ThirdLevelState(State): #Boss level
             gamObjects.update(delta_time)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-        self._fore_groundV3_go.update(delta_time)
-        self._effect_groundv3_go.update(delta_time)
+        
 
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
