@@ -12,10 +12,10 @@ class Player(Component):
         self.shoot_delay = 0.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
-        self.shoot_sound.set_volume(0.04)
         
     def awake(self, game_world):
         self._game_world = game_world
+        self.shoot_sound.set_volume(self._game_world.SFX_volume/1000)
         sr = self._gameObject.get_component("SpriteRenderer")
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
