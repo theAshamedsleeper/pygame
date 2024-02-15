@@ -356,7 +356,9 @@ class SecondLevelState(State):
         self._effect_groundV2_scroll_speed = 2500
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
-
+        
+        self.enemy_delay = 2
+        self.enemy_timer = 0
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
@@ -404,10 +406,13 @@ class SecondLevelState(State):
 
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_178.png", game_world=self._game_world))
+        go_enemy.add_component(SpriteRenderer("ship_178.png"))
+      #  sprite_renderer = SpriteRenderer(sprite_name="ship_178.png")
+      #  sprite_renderer.scale(0.1)
+       # go_enemy.add_component(sprite_renderer)
         go_enemy.add_component(Enemy())
 
-        self._gameObjects.append(go_enemy)
+        self.instantiate(go_enemy)
 
 
     def instantiate(self, gameObject):
@@ -429,13 +434,17 @@ class SecondLevelState(State):
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("lightcoral")
+        self.enemy_timer +=delta_time
+
 
         self._backgroundV2_go.update(delta_time)
         self._fore_groundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
         self._effect_groundV2_go.update(delta_time)
-        self.spawn_enemy()
-       # self.enemy_spawner.update(delta_time)
+
+        if self.enemy_timer >= self.enemy_delay:
+            self.spawn_enemy()
+            self.enemy_timer = 0 #resets cooldown after shoot()
 
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60

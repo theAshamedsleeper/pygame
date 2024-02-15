@@ -61,7 +61,7 @@ class SpriteRenderer(Component):
         super().__init__()
         
         self._game_world = game_world
-        
+
         if sprite_image is None:
             self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
         else:
@@ -113,6 +113,15 @@ class SpriteRenderer(Component):
         self._sprite.rect.center = self.gameObject.transform.position
         self._game_world.screen.blit(self._sprite_image, self._sprite.rect)
 
+    def scale(self, scale_factor):
+        if scale_factor <=0:
+            raise ValueError("Scale factor must be greater than zero")
+        
+        self.sprite_image = pygame.transform.scale(self._og_sprite_image,
+                                                   (int(self.og_sprite_image.get_width() * scale_factor),
+                                                   int(self._og_sprite_image.get_height() * scale_factor)))
+        
+        
 class Animator(Component):
 
     def __init__(self) -> None:
