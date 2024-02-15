@@ -541,6 +541,7 @@ class ThirdLevelState(State): #Boss level
         mixer.music.play(-1)
         mixer.music.set_volume(.03)
 
+
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
         go_mothership.add_component(MotherShip())
@@ -565,7 +566,7 @@ class ThirdLevelState(State): #Boss level
 
 
         go_player = GameObject(pygame.math.Vector2(0,0))
-        go_player.add_component(SpriteRenderer("player_ship.png"))
+        go_player.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\body_01.png"))
         go_player.add_component(Player())
         
         

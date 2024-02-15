@@ -61,7 +61,7 @@ class SpriteRenderer(Component):
         super().__init__()
         
         if sprite_image is None:
-            self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+            self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}").convert_alpha()
         else:
             self._sprite_image = sprite_image
         
@@ -71,7 +71,7 @@ class SpriteRenderer(Component):
         self._sprite.rect.center = (self._sprite.rect.width // 2, self._sprite.rect.height // 2)
         
         if sprite_name is not None:
-            self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}")
+            self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}").convert_alpha()
         else:
             self._og_sprite_image = sprite_image
 
@@ -137,10 +137,23 @@ class Animator(Component):
     def add_animation(self, name, *args):
         frames =[]
         for arg in args:
-            sprite_image = pygame.image.load(f"Assets\\{arg}")
+            sprite_image = pygame.image.load(f"Assets\\{arg}").convert_alpha()
             frames.append(sprite_image)
 
         self._animations[name] = frames
+
+
+    def add_animation_sheet(self, name, sprite_sheet_path, frame_size, num_frames):
+        sprite_sheet = pygame.image.load(f"Assets\\{sprite_sheet_path}").convert_alpha()
+        frames = []
+        sheet_width, sheet_height = sprite_sheet.get_size()
+        frame_width, frame_height = frame_size
+        for i in range(num_frames):
+            x = i * frame_width % sheet_width
+            y = (i * frame_width // sheet_width) * frame_height
+            frame = sprite_sheet.subsurface(pygame.Rect(x, y, frame_width, frame_height))
+            frames.append(frame)
+        self.animations[name] = frames
 
     def add_loaded_animation(self, name, animation):
         self._animations[name] = animation
