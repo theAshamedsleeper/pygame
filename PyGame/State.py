@@ -475,7 +475,6 @@ class SecondLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._backgroundV2_go.update(delta_time)
-       
         self._middle_groundV2_go.update(delta_time)
         
        # self.enemy_spawner.update(delta_time)
@@ -515,7 +514,7 @@ class ThirdLevelState(State): #Boss level
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
 
-        self._backgroundv3_image_path ="BackgroundV4.2.png"
+        self._backgroundv3_image_path ="BackgroundV4.4.png"
         self._scroll_speed = 50
         self._backgroundv3_go = GameObject(position=(0, 0))
         self._backgroundv3_go.add_component(Background(game_world, image_path=self._backgroundv3_image_path, scroll_speed=self._scroll_speed))

@@ -23,7 +23,7 @@ class GameWorld:
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
         self._score = 0
-        menu = MenuState(self)
+        menu = ThirdLevelState(self)
         self._currentState = menu
 
     @property
