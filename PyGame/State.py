@@ -333,6 +333,7 @@ class FirstLevelState(State):
 
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
+        self._middle_ground_go.update(delta_time)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -347,7 +348,7 @@ class FirstLevelState(State):
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
 
         self._effect_ground_go.update(delta_time)
-        self._middle_ground_go.update(delta_time)
+        
         
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -355,7 +356,6 @@ class FirstLevelState(State):
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
-        self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
 
     def makeTurret(self, string):
