@@ -389,22 +389,25 @@ class SecondLevelState(State):
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
-        go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_178.png"))
-        go_enemy.add_component(Enemy())
+        
         
         
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_player)
-        self._gameObjects.append(go_enemy)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
+    def spawn_enemy(self):
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_178.png", game_world=self._game_world))
+        go_enemy.add_component(Enemy())
+
+        self._gameObjects.append(go_enemy)
 
 
     def instantiate(self, gameObject):
@@ -431,6 +434,7 @@ class SecondLevelState(State):
         self._fore_groundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
         self._effect_groundV2_go.update(delta_time)
+        self.spawn_enemy()
        # self.enemy_spawner.update(delta_time)
 
         self.fps_counter(self.clock, self._game_world.screen)

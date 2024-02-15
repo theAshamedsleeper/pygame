@@ -28,7 +28,7 @@ class Enemy(Component):
         
         self._gameObject.transform.position.x -= self.speed * delta_time
 
-        if self._gameObject.transform.position.x < -self._sprite_size.x:
+        if self._gameObject.transform.position.x < -self._sprite_size:
             self._gameObject.destroy()
         
 # class EnemySpawner(Component):
