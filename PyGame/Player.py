@@ -12,10 +12,10 @@ class Player(Component):
         self.shoot_delay = 0.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
-        self.shoot_sound.set_volume(0.04)
         
     def awake(self, game_world):
         self._game_world = game_world
+        self.shoot_sound.set_volume(self._game_world.SFX_volume/1000)
         sr = self._gameObject.get_component("SpriteRenderer")
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
@@ -38,22 +38,19 @@ class Player(Component):
             movement.y += speed
 
         bottom_limit = self._screen_size.y - self._sprite_size.y
-        
+
+        #Player boundries for top and bottom of screen
         if self._gameObject.transform.position.y > bottom_limit:
             self._gameObject.transform.position.y = bottom_limit
-        elif self._gameObject.transform.position.y < 0:
-            self._gameObject.transform.position.y = 0
+        elif self._gameObject.transform.position.y < 20:
+            self._gameObject.transform.position.y = 20
      
         if keys[pygame.K_SPACE] and self.shoot_timer >= self.shoot_delay:
             
-           
             self.shoot()
             self.shoot_timer = 0 #resets cooldown after shoot()
  
         self._gameObject.transform.translate(movement*delta_time)
-
-        
-   
 
     def shoot(self):
         self.shoot_sound.play()
@@ -68,3 +65,14 @@ class Player(Component):
 
 
         self._game_world.current_State.instantiate(projectile)
+
+class Thruster(Component):
+
+    def awake(self, game_world):
+        return super().awake(game_world)
+
+    def start(self):
+        return super().start()
+
+    def update(self, delta_time):
+        return super().update(delta_time)

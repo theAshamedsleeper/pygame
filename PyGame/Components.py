@@ -74,7 +74,7 @@ class SpriteRenderer(Component):
             self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}").convert_alpha()
         else:
             self._og_sprite_image = sprite_image
-        
+
     @property
     def og_sprite_image(self):
         return self._og_sprite_image    
