@@ -65,3 +65,14 @@ class Player(Component):
 
 
         self._game_world.current_State.instantiate(projectile)
+
+class Thruster(Component):
+
+    def awake(self, game_world):
+        return super().awake(game_world)
+
+    def start(self):
+        return super().start()
+
+    def update(self, delta_time):
+        return super().update(delta_time)
