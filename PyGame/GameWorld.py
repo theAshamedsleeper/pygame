@@ -16,15 +16,15 @@ class GameWorld:
         self._running = True
         self._clock = pygame.time.Clock()
         self._clock.tick(60)
-        menu = SecondLevelState(self)
-        self._currentState = menu
         self._nextState = None
         self._newState = None
         self._music_vol = 100
         self._SFX_vol = 100
+        self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
-        
         self._score = 0
+        menu = MenuState(self)
+        self._currentState = menu
 
     @property
     def screen(self):
@@ -50,6 +50,14 @@ class GameWorld:
     def Score(self):
         return self._score
     
+    @property
+    def start_game(self):
+        return self._started_on_level
+    
+    @start_game.setter
+    def start_game(self,value):
+        self._started_on_level = value
+        
     @Score.setter
     def Score(self,value):
         self._score = value
@@ -91,6 +99,8 @@ class GameWorld:
             #drawing the game
             if self._nextState is not None:
                 self._currentState = self._nextState
+                self.Awake()
+                self.Start()
                 self._nextState = None
             self._currentState.update(delta_time)
             

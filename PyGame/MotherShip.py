@@ -18,6 +18,8 @@ class MotherShip(Component):
         self._turret_two = None
         self._turret_three = None
         self._turret_four = None
+        self._shot_index = 0
+        self._plasma_anim = []
 
     def awake(self, game_world):
         self._game_world = game_world
@@ -26,6 +28,7 @@ class MotherShip(Component):
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = ((self._screen_size.x/7)) - 120 #Spwn Location
         self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location       
+        self._plasma_anim = self.create_anim()
 
     def start(self):
         self._ship_part_north.transform.position.y = ((self._screen_size.y/2) - 185) 
@@ -42,8 +45,23 @@ class MotherShip(Component):
         self.CURRENT_MOUSE = pygame.mouse.get_pressed()
         
         if self.CURRENT_MOUSE[2] and not self.PREVIOUS_MOUSE[2]:  # Index 2 corresponds to the right mouse button
-            turret = self._turret_one.get_component("Turret")
-            turret.shoot()
+            match self._shot_index:
+                case 0:
+                    turret = self._turret_one.get_component("Turret")
+                    turret.shoot(self._plasma_anim)
+                    self._shot_index = 3
+                case 1:
+                    turret = self._turret_two.get_component("Turret")
+                    turret.shoot(self._plasma_anim)
+                    self._shot_index = 2
+                case 2:
+                    turret = self._turret_three.get_component("Turret")
+                    turret.shoot(self._plasma_anim)
+                    self._shot_index = 0
+                case 3:
+                    turret = self._turret_four.get_component("Turret")
+                    turret.shoot(self._plasma_anim)
+                    self._shot_index = 1
 
     def add_ship_part(self, go, choice):
         if choice == 0:
@@ -60,6 +78,22 @@ class MotherShip(Component):
             self._turret_three = go
         if choice == 3:
             self._turret_four = go
+    
+    def create_anim(self):
+        plasma_sprite_path = "Assets\\NicoEffects\\Effect_TheVortex\\30fps\\"
+        sprite = (f"{plasma_sprite_path}Frames\\Effect_TheVortex_1\\")
+        sprite_sheet = pygame.image.load(f"{plasma_sprite_path}Spritesheets\\Effect_TheVortex_1_427x431.png").convert_alpha()      
+        frames = []
+        sheet_width, sheet_height = sprite_sheet.get_size()
+        frame_width, frame_height = (427, 431) 
+        for i in range(24):
+            x = i * frame_width % sheet_width
+            y = (i * frame_width // sheet_width) * frame_height
+            frame = sprite_sheet.subsurface(pygame.Rect(x, y, frame_width, frame_height))
+            frames.append(frame)
+        
+        return frames
+
         
 
 class MShipPart(Component):
@@ -116,7 +150,7 @@ class Turret(Component):
         sr.sprite_image = rotated_image
         sr.sprite_rect = sr.sprite_image.get_rect(center=sr.sprite_rect.center)
         
-    def shoot(self):
+    def shoot(self, animation):
         mouse_pos = pygame.mouse.get_pos()
         sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
 
@@ -146,6 +180,7 @@ class Turret(Component):
                                     f"{sprite_path}tile004.png",
                                     f"{sprite_path}tile005.png",
                                     f"{sprite_path}tile006.png",)
+        animator.add_loaded_animation("Plasma", animation)
         
         animator.play_animation("Effect")
 
