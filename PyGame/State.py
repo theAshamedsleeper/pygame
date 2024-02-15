@@ -51,7 +51,6 @@ class MenuState(State):
         self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
         self._menu_sound = mixer.Sound("Assets\\Audio\\click.wav")
         self._started_on_level = False
-        #uses the system font
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
         #Selected
@@ -231,7 +230,7 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
-       # self.enemy_spawner = EnemySpawner(game_world)
+        #self.enemy_spawner = EnemySpawner(game_world)
 
 
         self._player_score = 0

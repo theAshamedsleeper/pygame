@@ -16,8 +16,6 @@ class GameWorld:
         self._running = True
         self._clock = pygame.time.Clock()
         self._clock.tick(60)
-        menu = MenuState(self)
-        self._currentState = menu
         self._nextState = None
         self._newState = None
         self._music_vol = 100
@@ -25,6 +23,8 @@ class GameWorld:
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
         self._score = 0
+        menu = MenuState(self)
+        self._currentState = menu
 
     @property
     def screen(self):
