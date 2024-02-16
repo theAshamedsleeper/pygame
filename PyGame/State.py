@@ -244,7 +244,7 @@ class FirstLevelState(State):
         self._background_go.add_component(Background(game_world, image_path=self._background_image_path, scroll_speed=self._scroll_speed))
 
         self._middle_ground_image_path = "GravelTransEkstra.png"
-        self._middle_ground_scroll_speed = 150
+        self._middle_ground_scroll_speed = 130
         self._middle_ground_go = GameObject(position=(0, 0))
         self._middle_ground_go.add_component(Background(game_world, image_path=self._middle_ground_image_path, scroll_speed=self._middle_ground_scroll_speed))
 
@@ -341,8 +341,8 @@ class FirstLevelState(State):
         self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
-        self._effect_ground_go.update(delta_time)
-    
+        self._fore_ground_go.update(delta_time)
+        self._middle_ground_go.update(delta_time)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -355,6 +355,9 @@ class FirstLevelState(State):
                 #    self._game_world.ChangeState(MenuState(self._game_world))
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+
+        self._effect_ground_go.update(delta_time)
+        
         
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
@@ -362,7 +365,6 @@ class FirstLevelState(State):
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
-        self._middle_ground_go.update(delta_time)
         self._effect_ground_go.update(delta_time)
         self.drawing_UI()
 
@@ -411,7 +413,9 @@ class SecondLevelState(State):
         self._effect_groundV2_scroll_speed = 2500
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
-
+        
+        self.enemy_delay = 2
+        self.enemy_timer = 0
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
@@ -444,22 +448,28 @@ class SecondLevelState(State):
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
-        go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_178.png"))
-        go_enemy.add_component(Enemy())
+        
         
         
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_player)
-        self._gameObjects.append(go_enemy)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
+    def spawn_enemy(self):
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_178.png"))
+      #  sprite_renderer = SpriteRenderer(sprite_name="ship_178.png")
+      #  sprite_renderer.scale(0.1)
+       # go_enemy.add_component(sprite_renderer)
+        go_enemy.add_component(Enemy())
+
+        self.instantiate(go_enemy)
 
 
     def instantiate(self, gameObject):
@@ -481,12 +491,16 @@ class SecondLevelState(State):
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("lightcoral")
+        self.enemy_timer +=delta_time
+
 
         self._backgroundV2_go.update(delta_time)
-       
         self._middle_groundV2_go.update(delta_time)
-        
-       # self.enemy_spawner.update(delta_time)
+        self._effect_groundV2_go.update(delta_time)
+
+        if self.enemy_timer >= self.enemy_delay:
+            self.spawn_enemy()
+            self.enemy_timer = 0 #resets cooldown after shoot()
 
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
@@ -523,7 +537,7 @@ class ThirdLevelState(State): #Boss level
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
 
-        self._backgroundv3_image_path ="BackgroundV4.2.png"
+        self._backgroundv3_image_path ="BackgroundV4.4.png"
         self._scroll_speed = 50
         self._backgroundv3_go = GameObject(position=(0, 0))
         self._backgroundv3_go.add_component(Background(game_world, image_path=self._backgroundv3_image_path, scroll_speed=self._scroll_speed))
@@ -550,6 +564,7 @@ class ThirdLevelState(State): #Boss level
         mixer.music.play(-1)
         mixer.music.set_volume(.03)
 
+
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
         go_mothership.add_component(MotherShip())
@@ -574,7 +589,7 @@ class ThirdLevelState(State): #Boss level
 
 
         go_player = GameObject(pygame.math.Vector2(0,0))
-        go_player.add_component(SpriteRenderer("player_ship.png"))
+        go_player.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\body_01.png"))
         go_player.add_component(Player())
         
         
