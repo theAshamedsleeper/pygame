@@ -453,7 +453,7 @@ class SecondLevelState(State):
 
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_178.png"))
+        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
       #  sprite_renderer = SpriteRenderer(sprite_name="ship_178.png")
       #  sprite_renderer.scale(0.1)
        # go_enemy.add_component(sprite_renderer)

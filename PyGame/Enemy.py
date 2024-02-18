@@ -34,8 +34,10 @@ class Enemy(Component):
 
     def update(self, delta_time):
 
+        self._gameObject.transform.position.x -= self.speed_x * delta_time
+
         if self._gameObject.transform.position.x <= self.stop_x_position:
-             self._gameObject.transform.position.x -= self.speed_x * delta_time
+             self.speed_x = 0
 
         if self.direction == 1:
             self._gameObject.transform.position.y += self.speed_y * delta_time
