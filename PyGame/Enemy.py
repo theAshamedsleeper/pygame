@@ -8,8 +8,11 @@ from Components import Component
 class Enemy(Component):
     def __init__(self, scale_factor=0.3) -> None:
         super().__init__()
-        self.speed = 200
+        self.speed_x = 200
+        self.speed_y = 0
         self.scale_factor = scale_factor
+        self.stop_x_position = 1100 #X position where the enemies stop
+        self.direction = 1  # Initial direction: 1 for down, -1 for up
         
 
 
@@ -30,8 +33,25 @@ class Enemy(Component):
         pass
 
     def update(self, delta_time):
+        self._gameObject.transform.position.x -= self.speed_x * delta_time
+        self._gameObject.transform.position.y -= self.speed_y * delta_time * self.direction
+
+        if self._gameObject.transform.position.x <= self.stop_x_position:
+            self.speed_x = 0
+            self.speed_y = 50
+            
+
+        if  self._gameObject.transform.position.y <= 0:  # Reached top of the screen
+                self.speed_y = -50  # Change direction to down
+        elif self._gameObject.transform.position.y >= self._screen_size.y:  # Reached bottom of the screen
+                self.direction = -1  # Change direction to up
+            
+
+            
+                
+            
+
         
-        self._gameObject.transform.position.x -= self.speed * delta_time
 
        # if self._gameObject.transform.position.x < -self._sprite_size:
       #      self._gameObject.destroy()
