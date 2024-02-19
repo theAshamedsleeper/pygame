@@ -24,8 +24,10 @@ class GameWorld:
         self._graphics = ["Low", "Medium", "High"]
         self._STT_ammo_count = "|||||"
         self._score = 0
-        menu = FirstLevelState(self)
+        self._game_paused = False
+        menu = MenuState(self)
         self._currentState = menu
+        
 
     @property
     def screen(self):
@@ -58,6 +60,14 @@ class GameWorld:
     @property
     def STT_ammo(self):
         return self._STT_ammo_count
+    
+    @property
+    def worldPause(self):
+        return self._game_paused
+    
+    @worldPause.setter
+    def worldPause(self, value):
+        self._game_paused = value
     
     @STT_ammo.setter
     def STT_ammo(self, value):

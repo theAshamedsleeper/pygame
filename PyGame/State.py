@@ -64,8 +64,6 @@ class MenuState(State):
 
         
     def hande_input(self):
-        #global _menu_sele
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -176,8 +174,8 @@ class MenuState(State):
             gamObjects.update(delta_time)
         
     def drawing_menu(self):
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel, (0,0,0), 1000, 0)
-        self.draw_text(f"{self._opt_menu_sel}", self._text_font_sel, (0,0,0), 1000, 50)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel, (0,0,0), 1000, 0)
+        #self.draw_text(f"{self._opt_menu_sel}", self._text_font_sel, (0,0,0), 1000, 50)
         if self._options_sele == False:
             match self._menu_sele:
                 case 0:
@@ -234,10 +232,13 @@ class FirstLevelState(State):
 
 
         self._player_score = 0
-        self._game_paused = False
+        self._menu_sele = 0
+        
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
-                
+        #Selected
+        self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 25)
+        
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 50
         self._background_go = GameObject(position=(0, 0))
@@ -254,7 +255,7 @@ class FirstLevelState(State):
         self._fore_ground_go.add_component(Background(game_world, image_path=self._fore_ground_image_path, scroll_speed=self._fore_ground_scroll_speed))
 
         self._effect_ground_image_path = "DustClear.png"
-        self._effect_ground_scroll_speed = 2500
+        self._effect_ground_scroll_speed = 250
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
@@ -323,51 +324,81 @@ class FirstLevelState(State):
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
     
     def pause_game(self):
-        while self._game_paused == True:
+        while self._game_world.worldPause == True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_p:
-                        self._game_paused = False
+                        self._game_world.worldPause = False
+    
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
+        
+        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        
+        if self._game_world.worldPause == True:
+            match self._menu_sele:
+                case 0: #back but
+                    self.draw_text("Back", self._text_font_sel,(255, 255, 255), 500, 100)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 150)
+                case 1: #Menu but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 100)
+                    self.draw_text("Menu",self._text_font_sel,(255, 255, 255), 500, 150)
+                    
 
     def update(self, delta_time):
+        #Game not paused
         # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("lightcoral")
+        #self._game_world.screen.fill("lightcoral")
 
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
+        
+        self._effect_ground_go.update(delta_time)
+
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+            
+        if self._game_world.worldPause == False:
+            #Makes a copy om _gameObjects and runs through that instead of the orginal
+            for gamObjects in self._gameObjects[:]:
+                gamObjects.update(delta_time)
+
+            self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
+        self._effect_ground_go.update(delta_time)
+        
+
+        self.drawing_UI()
+        self.handle_input()
+        
+    def handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    self._game_paused = True
-                    self.pause_game()
+                if event.key == pygame.K_p and self._game_world.worldPause == False:
+                    self._game_world.worldPause = True
+                    #self.pause_game()
+                elif self._game_world.worldPause == True and event.key == pygame.K_p:
+                    self._game_world.worldPause = False
+                    
+                if self._game_world.worldPause == True:
+                    if event.key == pygame.K_UP:
+                        self._menu_sele -= 1
+                    elif event.key == pygame.K_DOWN:
+                        self._menu_sele += 1
+                self._menu_sele = max(0, min(1, self._menu_sele))
+        
+                
                 #   self._music = mixer.music.stop()
                 #    self._game_world.ChangeState(MenuState(self._game_world))
-        self.fps_counter(self.clock, self._game_world.screen)
-        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
-
-        self._effect_ground_go.update(delta_time)
-        
-        
-        #Makes a copy om _gameObjects and runs through that instead of the orginal
-        for gamObjects in self._gameObjects[:]:
-            gamObjects.update(delta_time)
-
-        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-
-        self._effect_ground_go.update(delta_time)
-        self.drawing_UI()
-
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
