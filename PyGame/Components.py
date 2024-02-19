@@ -57,9 +57,11 @@ class Transform(Component):
 
 class SpriteRenderer(Component):
     
-    def __init__(self, sprite_name=None, sprite_image=None) -> None:
+    def __init__(self, sprite_name=None, sprite_image=None, game_world=None) -> None:
         super().__init__()
         
+        self._game_world = game_world
+
         if sprite_image is None:
             self._sprite_image = pygame.image.load(f"Assets\\{sprite_name}").convert_alpha()
         else:
@@ -111,6 +113,15 @@ class SpriteRenderer(Component):
         self._sprite.rect.center = self.gameObject.transform.position
         self._game_world.screen.blit(self._sprite_image, self._sprite.rect)
 
+    def scale(self, scale_factor):
+        if scale_factor <=0:
+            raise ValueError("Scale factor must be greater than zero")
+        
+        self.sprite_image = pygame.transform.scale(self._og_sprite_image,
+                                                   (int(self.og_sprite_image.get_width() * scale_factor),
+                                                   int(self._og_sprite_image.get_height() * scale_factor)))
+        
+        
 class Animator(Component):
 
     def __init__(self) -> None:
@@ -218,5 +229,4 @@ class Laser(Component):
         
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
-         #   print("Remove_check :-)")
-            
+        #   print("Remove_check :-)")

@@ -26,6 +26,8 @@ class MotherShip(Component):
         self._plasma_sound = None
         self._health = 200
 
+    
+    
     def awake(self, game_world):
         self._game_world = game_world
         sr = self._gameObject.get_component("SpriteRenderer")
@@ -210,5 +212,9 @@ class Turret(Component):
         self._sound.play()
         
         self._ammo -= 1
+        if len(self._game_world.STT_ammo) > 0:
+            self._game_world.STT_ammo = self._game_world.STT_ammo[:-1]
+            self._game_world.current_State.instantiate(go)
+            
         
         
