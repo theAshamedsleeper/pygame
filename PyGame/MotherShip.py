@@ -5,10 +5,12 @@ from TurretLaser import TurretLaser
 from GameObject import GameObject
 import pygame
 import math
+from pygame import mixer
 
 class MotherShip(Component):
     CURRENT_MOUSE = None
     PREVIOUS_MOUSE = None
+    shoot_delay = 3
 
     def __init__(self) -> None:
         super().__init__()
@@ -19,7 +21,10 @@ class MotherShip(Component):
         self._turret_three = None
         self._turret_four = None
         self._shot_index = 0
+        self._shoot_time = 0
         self._plasma_anim = []
+        self._plasma_sound = None
+        self._health = 200
 
     def awake(self, game_world):
         self._game_world = game_world
@@ -29,6 +34,7 @@ class MotherShip(Component):
         self._gameObject.transform.position.x = ((self._screen_size.x/7)) - 120 #Spwn Location
         self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location       
         self._plasma_anim = self.create_anim()
+        self._plasma_sound = mixer.Sound("Assets\\Audio\\sinus-bomb.mp3")
 
     def start(self):
         self._ship_part_north.transform.position.y = ((self._screen_size.y/2) - 185) 
@@ -41,27 +47,36 @@ class MotherShip(Component):
 
     def update(self, delta_time):
         
-        self.PREVIOUS_MOUSE = self.CURRENT_MOUSE
-        self.CURRENT_MOUSE = pygame.mouse.get_pressed()
+        self._shoot_time += delta_time
         
-        if self.CURRENT_MOUSE[2] and not self.PREVIOUS_MOUSE[2]:  # Index 2 corresponds to the right mouse button
-            match self._shot_index:
-                case 0:
-                    turret = self._turret_one.get_component("Turret")
-                    turret.shoot(self._plasma_anim)
-                    self._shot_index = 3
-                case 1:
-                    turret = self._turret_two.get_component("Turret")
-                    turret.shoot(self._plasma_anim)
-                    self._shot_index = 2
-                case 2:
-                    turret = self._turret_three.get_component("Turret")
-                    turret.shoot(self._plasma_anim)
-                    self._shot_index = 0
-                case 3:
-                    turret = self._turret_four.get_component("Turret")
-                    turret.shoot(self._plasma_anim)
-                    self._shot_index = 1
+        if self._shoot_time >= self.shoot_delay:
+            
+        
+            self.PREVIOUS_MOUSE = self.CURRENT_MOUSE
+            self.CURRENT_MOUSE = pygame.mouse.get_pressed()
+            
+            if self.CURRENT_MOUSE[2] and not self.PREVIOUS_MOUSE[2]:  # Index 2 corresponds to the right mouse button
+                match self._shot_index:
+                    case 0:
+                        turret = self._turret_one.get_component("Turret")
+                        turret.shoot(self._plasma_anim, self._plasma_sound)
+                        self._shot_index = 3
+                        self._shoot_time = 0
+                    case 1:
+                        turret = self._turret_two.get_component("Turret")
+                        turret.shoot(self._plasma_anim, self._plasma_sound)
+                        self._shot_index = 2
+                        self._shoot_time = 0
+                    case 2:
+                        turret = self._turret_three.get_component("Turret")
+                        turret.shoot(self._plasma_anim, self._plasma_sound)
+                        self._shot_index = 0
+                        self._shoot_time = 0
+                    case 3:
+                        turret = self._turret_four.get_component("Turret")
+                        turret.shoot(self._plasma_anim, self._plasma_sound)
+                        self._shot_index = 1
+                        self._shoot_time = 0
 
     def add_ship_part(self, go, choice):
         if choice == 0:
@@ -125,6 +140,9 @@ class Turret(Component):
     def __init__(self) -> None:
         super().__init__()
         self._rotation = 0
+        self._ammo = 1
+        self._sound = mixer.Sound("Assets\\Audio\\plasmacannon.mp3")
+
 
     def awake(self, game_world):
         self._game_world = game_world
@@ -132,25 +150,29 @@ class Turret(Component):
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = ((self._screen_size.x/7)) - 120 #Spwn Location
-        self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location      
+        self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location 
+        self._sound.set_volume(self._game_world.SFX_volume/1000)     
     
     def start(self):
         return super().start()
     
     def update(self, delta_time):
         sr = self._gameObject.get_component("SpriteRenderer")
-        mouse_pos = pygame.mouse.get_pos()
+        if self._ammo >= 1:
+            mouse_pos = pygame.mouse.get_pos()
+            
+            dx = mouse_pos[0] - sr.sprite_rect.centerx
+            dy = mouse_pos[1] - sr.sprite_rect.centery
+            self._rotation = math.degrees(math.atan2(-dy, dx)) - 90
+            
+            # Rotate the original sprite image once and store the rotated image
+            rotated_image = pygame.transform.rotate(sr.og_sprite_image, self._rotation)
+            sr.sprite_image = rotated_image
+            sr.sprite_rect = sr.sprite_image.get_rect(center=sr.sprite_rect.center)
+        elif self._ammo <= 0:
+            pass
         
-        dx = mouse_pos[0] - sr.sprite_rect.centerx
-        dy = mouse_pos[1] - sr.sprite_rect.centery
-        self._rotation = math.degrees(math.atan2(-dy, dx)) - 90
-        
-        # Rotate the original sprite image once and store the rotated image
-        rotated_image = pygame.transform.rotate(sr.og_sprite_image, self._rotation)
-        sr.sprite_image = rotated_image
-        sr.sprite_rect = sr.sprite_image.get_rect(center=sr.sprite_rect.center)
-        
-    def shoot(self, animation):
+    def shoot(self, animation, sound):
         mouse_pos = pygame.mouse.get_pos()
         sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
 
@@ -170,7 +192,7 @@ class Turret(Component):
 
 
         go = GameObject(None)
-        go.add_component(TurretLaser(b_position, mouse_pos, direction))
+        go.add_component(TurretLaser(b_position, mouse_pos, direction, sound))
         go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
         animator = go.add_component(Animator())
 
@@ -185,5 +207,8 @@ class Turret(Component):
         animator.play_animation("Effect")
 
         self._game_world.current_State.instantiate(go)
+        self._sound.play()
+        
+        self._ammo -= 1
         
         
