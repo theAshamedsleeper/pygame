@@ -9,7 +9,7 @@ class Enemy(Component):
     def __init__(self, scale_factor=0.3) -> None:
         super().__init__()
         self.speed_x = 201
-        self.speed_y = 50
+        self.speed_y = 70
         self.scale_factor = scale_factor
         self.stop_x_position = 1100 #X position where the enemies stop
         self.direction = 1  # Initial direction: 1 for down, -1 for up
@@ -40,13 +40,18 @@ class Enemy(Component):
             self._gameObject.transform.position.y += self.speed_y * delta_time
             if self._gameObject.transform.position.y >= 720:
                 self.direction = -1  # Change direction to up
-                self.stop_x_position-=100
+                if self.stop_x_position >800:
+                    self.stop_x_position-=100
+                print(self.stop_x_position)
                 self.speed_x = 200
         else:
             self._gameObject.transform.position.y -= self.speed_y * delta_time
             if self._gameObject.transform.position.y <= 180:
                 self.direction = 1  # Change direction to down
-                self.stop_x_position-=100
+                if self.stop_x_position >800:
+                    self.stop_x_position-=100
+                print(self.stop_x_position)
+
                 self.speed_x = 200
 
 

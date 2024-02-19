@@ -404,7 +404,7 @@ class SecondLevelState(State):
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
         
-        self.enemy_delay = 2
+        self.enemy_delay = 3
         self.enemy_timer = 0
 
         # background_music = mixer
