@@ -27,7 +27,12 @@ class State(ABC):
     def __init__(self, game_world) -> None:
         super().__init__()
         self._gameObjects = []
+        self._colliders = []
         self._game_world = game_world
+
+    @property
+    def colliders(self):
+        return self._colliders
 
     @abstractmethod
     def awake(self, game_world):
@@ -231,7 +236,6 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
-        #self.enemy_spawner = EnemySpawner(game_world)
 
 
         self._player_score = 0
@@ -259,6 +263,8 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
+        self.enemy_delay = 5 #Sekunder mellem enemies
+        self.enemy_timer = 0
 
         # background_music = mixer
         self._music = mixer.music.load("Assets\\Audio\\Background.mp3")
@@ -322,6 +328,13 @@ class FirstLevelState(State):
         img = font.render(text, True, text_col)
         self._game_world.screen.blit(img,(x,y))
 
+    def spawn_enemy(self):
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(Enemy())
+
+        self.instantiate(go_enemy)
+
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
         gameObject.start()
@@ -356,12 +369,20 @@ class FirstLevelState(State):
         self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
 
     def update(self, delta_time):
+        
         # fill the screen with a color to wipe away anything from last frame
         self._game_world.screen.fill("lightcoral")
+        self.enemy_timer +=delta_time
+
 
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
+
+        if self.enemy_timer >= self.enemy_delay:
+            self.spawn_enemy()
+            self.enemy_timer = 0 #resets cooldown after shoot()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -381,6 +402,11 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
@@ -440,7 +466,7 @@ class SecondLevelState(State):
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
         
-        self.enemy_delay = 2
+        self.enemy_delay = 4 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -489,10 +515,7 @@ class SecondLevelState(State):
 
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_178.png"))
-      #  sprite_renderer = SpriteRenderer(sprite_name="ship_178.png")
-      #  sprite_renderer.scale(0.1)
-       # go_enemy.add_component(sprite_renderer)
+        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
         go_enemy.add_component(Enemy())
 
         self.instantiate(go_enemy)
@@ -534,6 +557,11 @@ class SecondLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV2_go.update(delta_time)
@@ -583,7 +611,9 @@ class ThirdLevelState(State): #Boss level
         self._effect_groundv3_scroll_speed = 2500
         self._effect_groundv3_go = GameObject(position=(0, 0))
         self._effect_groundv3_go.add_component(Background(game_world, image_path=self._effect_groundv3_image_path, scroll_speed=self._effect_groundv3_scroll_speed))
-
+        
+        self.enemy_delay = 3 #Sekunder mellem enemies
+        self.enemy_timer = 0    
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
@@ -629,6 +659,13 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
+    def spawn_enemy(self):
+        go_enemy = GameObject(pygame.math.Vector2(0,0))
+        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(Enemy())
+
+        self.instantiate(go_enemy)
+
 
 
     def instantiate(self, gameObject):
@@ -652,6 +689,8 @@ class ThirdLevelState(State): #Boss level
         self._game_world.screen.fill("lightcoral")
         self._backgroundv3_go.update(delta_time)
         self._middle_groundV3_go.update(delta_time)
+        self.enemy_timer +=delta_time
+
         
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
@@ -660,9 +699,18 @@ class ThirdLevelState(State): #Boss level
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
 
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
+
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
+
+        if self.enemy_timer >= self.enemy_delay:
+            self.spawn_enemy()
+            self.enemy_timer = 0 #resets cooldown after shoot()
 
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
