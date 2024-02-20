@@ -12,6 +12,10 @@ class Player(Component):
         self.shoot_delay = 0.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
+
+        #property
+    def movement(self):
+        return self._movement
         
     def awake(self, game_world):
         self._game_world = game_world
@@ -29,6 +33,7 @@ class Player(Component):
         keys = pygame.key.get_pressed()
         speed = 650
         movement = pygame.math.Vector2(0,0)
+
         
         self.shoot_timer +=delta_time
 
@@ -68,11 +73,29 @@ class Player(Component):
 
 class Thruster(Component):
 
+    def __init__(self) -> None:
+        super().__init__()
+
+    def draw_flame(self, surface, ship_position):
+        flame_image = pygame.Surface((10, 20))
+        flame_image.fill((255, 69, 0))  # Orange color flame
+        flame_rect = flame_image.get_rect(midbottom=ship_position)
+        surface.blit(flame_image, flame_rect)
+
     def awake(self, game_world):
         return super().awake(game_world)
-
+    
     def start(self):
         return super().start()
 
     def update(self, delta_time):
-        return super().update(delta_time)
+        ship_position = self._gameObject.transform.position
+        ship_movement = self._gameObject.get_component("Player").movement
+        
+        if ship_movement.y < 0:  # Moving up
+            self.draw_flame(self._game_world.screen, ship_position - pygame.math.Vector2(0, 10))
+        elif ship_movement.y > 0:  # Moving down
+            self.draw_flame(self._game_world.screen, ship_position + pygame.math.Vector2(0, 10))
+
+    
+    

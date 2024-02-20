@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pygame
 import sys
 from Player import Player
+from Player import Thruster
 from MotherShip import MotherShip
 from MotherShip import MShipPart
 from MotherShip import Turret
@@ -288,6 +289,9 @@ class FirstLevelState(State):
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
+
+        thruster_component = Thruster()
+        go_player.add_component(thruster_component)
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
@@ -364,6 +368,12 @@ class FirstLevelState(State):
             gamObjects.update(delta_time)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
+        # Update the thruster component
+        for game_object in self._gameObjects:
+            thruster_component = game_object.get_component("Thruster")
+            if thruster_component:
+                thruster_component.update(delta_time)
 
         self._effect_ground_go.update(delta_time)
         self.drawing_UI()
