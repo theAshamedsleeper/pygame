@@ -145,10 +145,11 @@ class Animator(Component):
         self._frame_duration = value
 
 
-    def add_animation(self, name, *args):
+    def add_animation(self, name, rotation, *args):
         frames =[]
         for arg in args:
             sprite_image = pygame.image.load(f"Assets\\{arg}").convert_alpha()
+            sprite_image = pygame.transform.rotate(sprite_image, rotation)
             frames.append(sprite_image)
 
         self._animations[name] = frames
@@ -209,7 +210,7 @@ class Animator(Component):
         # Get the current animation sequence
         animation_sequence = self._animations[self._current_animation]
         # Check if the current frame index is at the last frame
-        is_final_frame = self._current_frame_index == len(animation_sequence) - 1
+        is_final_frame = self._current_frame_index >= len(animation_sequence) - 1
         if is_final_frame:
             # Reset the frame index to loop the animation
             self._current_frame_index = 0

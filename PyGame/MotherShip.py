@@ -198,7 +198,7 @@ class Turret(Component):
         go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
         animator = go.add_component(Animator())
 
-        animator.add_animation("Effect", f"{sprite_path}tile001.png",
+        animator.add_animation("Effect", 0, f"{sprite_path}tile001.png",
                                     f"{sprite_path}tile002.png",
                                     f"{sprite_path}tile003.png",
                                     f"{sprite_path}tile004.png",
