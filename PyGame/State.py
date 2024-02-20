@@ -160,8 +160,6 @@ class MenuState(State):
             gameObject.start()
 
     def update(self, delta_time):        
-        # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("cornflowerblue")
         #drawing the game
         self._background_go.update(delta_time)
 
@@ -324,9 +322,10 @@ class FirstLevelState(State):
         for gameObject in self._gameObjects[:]:
             gameObject.start()
 
-    def move_to_endscreen(self):
+    def move_to_endscreen(self, Win):#Win is bool
+        self._music = mixer.music.pause()
         self._game_world.score = self._player_score
-        self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
+        self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
 
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
@@ -413,7 +412,8 @@ class FirstLevelState(State):
                 elif self._game_world.worldPause == True and event.key == pygame.K_p:
                     self._game_world.worldPause = False
                     self._options_sele = False
-                    
+                elif event.key == pygame.K_COMMA:
+                    self.move_to_endscreen(True)
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
                         if self._options_sele == False:
@@ -776,12 +776,21 @@ class ThirdLevelState(State): #Boss level
 
     
 class loosOrVicState(State):
-    def __init__(self, game_world) -> None:
+    def __init__(self, game_world, win) -> None:
         super().__init__(game_world)             
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
         #Selected
         self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 30)
+
+        if win == True:
+            self._background_image_path ="WonGame.png"
+            self._background_go = GameObject(position=(0, 0))
+            self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
+        else:
+            self._background_image_path ="LostGame.png"
+            self._background_go = GameObject(position=(0, 0))
+            self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
 
         self._text_font_write_name = pygame.font.Font("Assets\\Font\\ARCADE_N.TTF", 30)
         self._player_name = ""
@@ -797,28 +806,28 @@ class loosOrVicState(State):
         self._game_world.screen.blit(img,(x,y))
 
     def write_player_name(self):
-        self.draw_text("Your score:", self._text_font, (0,0,0), 300, 30)
-        self.draw_text(f"{self._game_world.Score}", self._text_font, (0,0,0), 650, 30)
-        self.draw_text("Write your desired name", self._text_font, (0,0,0), 300, 80)
-        self.draw_text(f"{self._player_name}", self._text_font_write_name, (0,0,0), 350, 180)
-        self.draw_text("Press       to continue", self._text_font, (0,0,0), 300, 280)
+        self.draw_text("Your score:", self._text_font, (255,255,255), 300, 30)
+        self.draw_text(f"{self._game_world.Score}", self._text_font, (255,255,255), 650, 30)
+        self.draw_text("Write your desired name", self._text_font, (255,255,255), 300, 80)
+        self.draw_text(f"{self._player_name}", self._text_font_write_name, (255,255,255), 350, 180)
+        self.draw_text("Press       to continue", self._text_font, (255,255,255), 300, 280)
         self.draw_text("      enter            ", self._text_font_sel, (139,0,139), 300, 280)
         
     def drawing_endscreen(self):
-        self.draw_text("Score:", self._text_font, (0,0,0), 500, 20)
+        self.draw_text("Score:", self._text_font, (255,255,255), 500, 20)
         #displaying the player score
-        self.draw_text(f"{self._game_world.Score}", self._text_font, (0,0,0), 700, 20)
-        self.draw_text("Name:        Score:", self._text_font, (0,0,0), 400, 65)
+        self.draw_text(f"{self._game_world.Score}", self._text_font, (255,255,255), 700, 20)
+        self.draw_text("Name:        Score:", self._text_font, (255,255,255), 400, 65)
         if self._menu_sele == 0:
-            self.draw_text("Restart", self._text_font, (0,0,0), 300, 600)        
-            self.draw_text("Main Menu", self._text_font, (0,0,0), 700, 600)        
+            self.draw_text("Restart", self._text_font, (255,255,255), 300, 600)        
+            self.draw_text("Main Menu", self._text_font, (255,255,255), 700, 600)        
         match self._menu_sele:
             case -1:#Restart the game
-                self.draw_text("Restart", self._text_font_sel, (0,0,0), 300, 600)        
-                self.draw_text("Main Menu", self._text_font, (0,0,0), 700, 600)        
+                self.draw_text("Restart", self._text_font_sel, (255,255,255), 300, 600)        
+                self.draw_text("Main Menu", self._text_font, (255,255,255), 700, 600)        
             case 2:#Head to main menu
-                self.draw_text("Main Menu", self._text_font_sel, (0,0,0), 700, 600)        
-                self.draw_text("Restart", self._text_font, (0,0,0), 300, 600)        
+                self.draw_text("Main Menu", self._text_font_sel, (255,255,255), 700, 600)        
+                self.draw_text("Restart", self._text_font, (255,255,255), 300, 600)        
                 
         y = 125 #Initial y-coordinate for drawing
         if self._read_Json == False:
@@ -831,8 +840,8 @@ class loosOrVicState(State):
                 break
             score = player_data["score"]
                 
-            self.draw_text(f"{name}", self._text_font, (0,0,0), 400, y)
-            self.draw_text(f"{score}", self._text_font, (0,0,0), 825, y)
+            self.draw_text(f"{name}", self._text_font, (255,255,255), 400, y)
+            self.draw_text(f"{score}", self._text_font, (255,255,255), 825, y)
             y += 50
             i +=1
 
@@ -884,8 +893,9 @@ class loosOrVicState(State):
             gameObject.start()
             
     def update(self, delta_time):
-        # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("lightcoral")
+        
+        self._background_go.update(delta_time)
+        
         if self._writen_name == False:
             self.write_player_name()
         else:
