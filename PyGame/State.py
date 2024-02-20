@@ -310,7 +310,6 @@ class FirstLevelState(State):
         go_enemy.add_component(Enemy())
 
         self.instantiate(go_enemy)
-        print("enemy spawned")
 
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
@@ -624,7 +623,6 @@ class ThirdLevelState(State): #Boss level
         go_enemy.add_component(Enemy())
 
         self.instantiate(go_enemy)
-        print("enemy spawned")
 
 
 
