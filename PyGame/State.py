@@ -237,7 +237,7 @@ class FirstLevelState(State):
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
         self._graphics_opt = 1      
         #So its reset from the start
-        self._game_world.STT_ammo = "|||||"
+        self._game_world.STT_ammo = "||||"
         
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
@@ -267,8 +267,6 @@ class FirstLevelState(State):
 
         # background_music = mixer
         self._music = mixer.music.load("Assets\\Audio\\Background.mp3")
-        self._music = mixer.music.play(-1)
-        self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
@@ -316,6 +314,8 @@ class FirstLevelState(State):
 
     def awake(self, game_world):
         super().awake(game_world)
+        self._music = mixer.music.play(-1)
+        self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)        
 
@@ -447,6 +447,7 @@ class FirstLevelState(State):
             case 2:# back to menu
                 self._options_sele == False
                 self._game_world.worldPause = False
+                self._music = mixer.music.pause()   
                 level = MenuState(self._game_world)
                 self._game_world.ChangeToNewState(level)
     tmp = 1
@@ -467,6 +468,7 @@ class FirstLevelState(State):
                     self._game_world.music_volume -= 10
                     if self._game_world.music_volume < 0:
                         self._game_world.music_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
             case 1: #sfx Volumen
                 if self._opt_menu_sel == 2:
                     self._game_world.SFX_volume += 10     
@@ -476,6 +478,7 @@ class FirstLevelState(State):
                     self._game_world.SFX_volume -= 10     
                     if self._game_world.SFX_volume < 0:
                         self._game_world.SFX_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.SFX_Volume/1000)
             case 2:#Grapchis options
                 self._graphics_opt = self.tmp
         #Resets the pos to 1

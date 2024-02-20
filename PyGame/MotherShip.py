@@ -53,7 +53,6 @@ class MotherShip(Component):
         
         if self._shoot_time >= self.shoot_delay:
             
-        
             self.PREVIOUS_MOUSE = self.CURRENT_MOUSE
             self.CURRENT_MOUSE = pygame.mouse.get_pressed()
             
@@ -153,7 +152,7 @@ class Turret(Component):
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = ((self._screen_size.x/7)) - 120 #Spwn Location
         self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location 
-        self._sound.set_volume(self._game_world.SFX_volume/1000)     
+        self._sound.set_volume(self._game_world.SFX_volume/200)     
     
     def start(self):
         return super().start()
