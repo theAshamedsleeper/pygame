@@ -96,7 +96,7 @@ class PlamsaExplosion(Component):
     def awake(self, game_world):
         self._gameObject.transform.position = self._position_to_set
         self._game_world = game_world
-        self._sound.set_volume(self._game_world.SFX_volume/1000)
+        self._sound.set_volume(self._game_world.SFX_volume/200)
     
     def start(self):
         self._animator = self._gameObject.get_component("Animator")

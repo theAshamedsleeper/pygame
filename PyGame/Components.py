@@ -231,6 +231,47 @@ class Laser(Component):
             self._gameObject.destroy()
         #   print("Remove_check :-)")
             
+
+class Collider():
+    def __init__(self) -> None:
+        self._other_colliders = []
+
+    def awake(self, game_world):
+        sr = self.gameObject.get_component("SpriteRenderer")
+        self._collision_box = sr.sprite.rect
+        game_world.colliders.append(self)
+
+    @property
+    def collision_box(self):
+        return self._collision_box
+    
+    def collision_check(self, other):
+        is_rect_colliding = self._collision_box.colliderect(other.collision_box)
+        is_already_colliding = other in self._other_colliders
+
+        if is_rect_colliding:
+            if not is_already_colliding:
+                self.collision_enter(other)
+                other.collision_enter(self)
+        else:
+            if is_already_colliding:
+                self.collision_exit(other)
+                other.collision_exit(self)
+
+    def start(self):
+        pass
+
+    def update(self, delta_time):
+        pass
+
+    def collision_enter(self, other):
+        self._other_colliders.append(other)
+        print("Collision enter")
+
+    def collision_exit(self, other):
+         self._other_colliders.remove(other)
+         print("Collision exit")
+         
 class EnemyLaser(Component):
     def awake(self, game_world):
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
