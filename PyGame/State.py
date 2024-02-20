@@ -233,6 +233,11 @@ class FirstLevelState(State):
 
         self._player_score = 0
         self._menu_sele = 0
+        self._options_sele = False  
+        self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
+        self._graphics_opt = 1      
+        #So its reset from the start
+        self._game_world.STT_ammo = "|||||"
         
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
@@ -322,17 +327,7 @@ class FirstLevelState(State):
     def move_to_endscreen(self):
         self._game_world.score = self._player_score
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
-    
-    def pause_game(self):
-        while self._game_world.worldPause == True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_p:
-                        self._game_world.worldPause = False
-    
+
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
@@ -340,15 +335,44 @@ class FirstLevelState(State):
         
         self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
-        if self._game_world.worldPause == True:
+        if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
                 case 0: #back but
-                    self.draw_text("Back", self._text_font_sel,(255, 255, 255), 500, 100)
-                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 150)
-                case 1: #Menu but
-                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 100)
-                    self.draw_text("Menu",self._text_font_sel,(255, 255, 255), 500, 150)
-                    
+                    self.draw_text("Back", self._text_font_sel,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 1: #Options but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font_sel,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 2: #Menu but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font_sel,(255, 255, 255), 500, 460)
+        elif self._game_world.worldPause == True and self._options_sele == True:
+            match self._menu_sele:
+                case 0:
+                    self.draw_text("Music", self._text_font_sel, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 1:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font_sel, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font_sel, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 2:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font_sel, (255, 255, 255), 500, 460)    
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (255, 255, 255), 750, 460)
+
 
     def update(self, delta_time):
         #Game not paused
@@ -388,17 +412,75 @@ class FirstLevelState(State):
                     #self.pause_game()
                 elif self._game_world.worldPause == True and event.key == pygame.K_p:
                     self._game_world.worldPause = False
+                    self._options_sele = False
                     
                 if self._game_world.worldPause == True:
-                    if event.key == pygame.K_UP:
+                    if event.key == pygame.K_SPACE: 
+                        if self._options_sele == False:
+                            self.do_menu_input()
+                        elif self._options_sele == True:
+                            self._options_sele = False
+                    elif event.key == pygame.K_UP:
                         self._menu_sele -= 1
                     elif event.key == pygame.K_DOWN:
                         self._menu_sele += 1
-                self._menu_sele = max(0, min(1, self._menu_sele))
+                    if self._options_sele == True:
+                        if event.key == pygame.K_LEFT:
+                            #self._menu_sound.play()
+                            self.do_options_input(-1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                        elif event.key == pygame.K_RIGHT:
+                            #self._menu_sound.play()
+                            self.do_options_input(1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                self._menu_sele = max(0, min(2, self._menu_sele))
         
                 
                 #   self._music = mixer.music.stop()
                 #    self._game_world.ChangeState(MenuState(self._game_world))
+    def do_menu_input(self):
+        match self._menu_sele:
+            case 0:#new game
+                self._game_world.worldPause = False
+            case 1:#Options
+                    self._options_sele = True
+            case 2:# back to menu
+                self._options_sele == False
+                self._game_world.worldPause = False
+                level = MenuState(self._game_world)
+                self._game_world.ChangeToNewState(level)
+    tmp = 1
+    def do_options_input(self, value):
+        self._opt_menu_sel += value
+        self._opt_menu_sel = max(0, min(2, self._opt_menu_sel))
+        self.tmp += value
+        self.tmp = max(0, min(2, self.tmp))
+
+        #Which option the player is on
+        match self._menu_sele:
+            case 0: #Music Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.music_volume += 10     
+                    if self._game_world.music_volume > 100:
+                        self._game_world.music_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.music_volume -= 10
+                    if self._game_world.music_volume < 0:
+                        self._game_world.music_volume = 0     
+            case 1: #sfx Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.SFX_volume += 10     
+                    if self._game_world.SFX_volume > 100:
+                        self._game_world.SFX_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.SFX_volume -= 10     
+                    if self._game_world.SFX_volume < 0:
+                        self._game_world.SFX_volume = 0     
+            case 2:#Grapchis options
+                self._graphics_opt = self.tmp
+        #Resets the pos to 1
+        self._opt_menu_sel = 1
+    
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
