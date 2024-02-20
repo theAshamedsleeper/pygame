@@ -3,19 +3,26 @@ import random
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Component
+from Components import EnemyLaser
+from pygame import mixer
 
 
 class Enemy(Component):
     def __init__(self, scale_factor=0.3) -> None:
         super().__init__()
         self.speed_x = 201
-        self.speed_y = 70
+        self.speed_y = 200
         self.scale_factor = scale_factor
         self.stop_x_position = 1100 #X position where the enemies stop
         self.direction = 1  # Initial direction: 1 for down, -1 for up
+        self.shoot_delay = 4.15
+        self.shoot_timer = 0
+        self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
     
     def awake(self, game_world):
         self._game_world = game_world
+        self.shoot_sound.set_volume(self._game_world.SFX_volume/1000)
+
         sr = self._gameObject.get_component("SpriteRenderer")
         sr.scale(self.scale_factor)
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
@@ -30,11 +37,16 @@ class Enemy(Component):
         pass
 
     def update(self, delta_time):
+        self.shoot_timer +=delta_time
 
         self._gameObject.transform.position.x -= self.speed_x * delta_time
 
         if self._gameObject.transform.position.x <= self.stop_x_position:
             self.speed_x = 0
+
+        if self.shoot_timer >= self.shoot_delay:
+            self.shoot()
+            self.shoot_timer = 0 
         
         if self.direction == 1:
             self._gameObject.transform.position.y += self.speed_y * delta_time
@@ -42,7 +54,6 @@ class Enemy(Component):
                 self.direction = -1  # Change direction to up
                 if self.stop_x_position >800:
                     self.stop_x_position-=100
-                print(self.stop_x_position)
                 self.speed_x = 200
         else:
             self._gameObject.transform.position.y -= self.speed_y * delta_time
@@ -50,8 +61,21 @@ class Enemy(Component):
                 self.direction = 1  # Change direction to down
                 if self.stop_x_position >800:
                     self.stop_x_position-=100
-                print(self.stop_x_position)
-
                 self.speed_x = 200
+
+    def shoot(self):
+        self.shoot_sound.play()
+        projectile = GameObject(None)
+        sr = projectile.add_component(SpriteRenderer("EnemyLaser.png"))
+        scale_factor = 3  # You can adjust this value as needed
+        sr.scale(scale_factor)
+        projectile.add_component(EnemyLaser())
+
+
+        projectile_position = pygame.math.Vector2(self._gameObject.transform.position.x+(self._sprite_size.x-250)-sr.sprite_image.get_width()/2
+                                                 ,self._gameObject.transform.position.y-85)
+
+        projectile.transform.position = projectile_position
+        self._game_world.current_State.instantiate(projectile)
 
 
