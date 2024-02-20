@@ -8,6 +8,7 @@ from MotherShip import Turret
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
+from Components import Laser
 import pygame.locals
 import threading
 from pygame import mixer
@@ -45,7 +46,6 @@ class MenuState(State):
 
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
-        self._dis = pygame.display.set_mode((1280, 720))
         self._background_image_path ="MenuBackground.png"
         self._background_go = GameObject(position=(0, 0))
         self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
@@ -149,7 +149,7 @@ class MenuState(State):
     
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
-        self._dis.blit(img,(x,y))
+        self._game_world.screen.blit(img,(x,y))
 
     def awake(self, game_world):
         super().awake(game_world)
@@ -235,7 +235,9 @@ class FirstLevelState(State):
 
         self._player_score = 0
         self._game_paused = False
-        
+        #not selected
+        self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
+                
         self._background_image_path ="SimpleBackgroundClear.png"
         self._scroll_speed = 50
         self._background_go = GameObject(position=(0, 0))
@@ -296,7 +298,10 @@ class FirstLevelState(State):
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
-
+        
+    def draw_text(self,text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self._game_world.screen.blit(img,(x,y))
 
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
@@ -326,6 +331,10 @@ class FirstLevelState(State):
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_p:
                         self._game_paused = False
+    def drawing_UI(self):
+        self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
+        self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
+        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
 
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
@@ -357,6 +366,7 @@ class FirstLevelState(State):
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
         self._effect_ground_go.update(delta_time)
+        self.drawing_UI()
 
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
@@ -652,9 +662,7 @@ class ThirdLevelState(State): #Boss level
 class loosOrVicState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)             
-        self._dis = pygame.display.set_mode((1280, 720))
-        
-                #not selected
+        #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 30)
         #Selected
         self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 30)
@@ -670,7 +678,7 @@ class loosOrVicState(State):
     
     def draw_text(self, text, font, text_col, x, y):
         img = font.render(text, True, text_col)
-        self._dis.blit(img,(x,y))
+        self._game_world.screen.blit(img,(x,y))
 
     def write_player_name(self):
         self.draw_text("Your score:", self._text_font, (0,0,0), 300, 30)

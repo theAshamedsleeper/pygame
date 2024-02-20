@@ -22,8 +22,9 @@ class GameWorld:
         self._SFX_vol = 100
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
+        self._STT_ammo_count = "|||||"
         self._score = 0
-        menu = SecondLevelState(self)
+        menu = FirstLevelState(self)
         self._currentState = menu
 
     @property
@@ -53,6 +54,14 @@ class GameWorld:
     @property
     def start_game(self):
         return self._started_on_level
+    
+    @property
+    def STT_ammo(self):
+        return self._STT_ammo_count
+    
+    @STT_ammo.setter
+    def STT_ammo(self, value):
+        self._STT_ammo_count = value
     
     @start_game.setter
     def start_game(self,value):
