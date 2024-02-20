@@ -24,7 +24,7 @@ class Enemy(Component):
 
         min_y = 80  # Minimum y-coordinate for enemy spawn
         max_y = max(min_y, self._screen_size.y)  # Ensure max_y is at least min_y
-        self._gameObject.transform.position.y = random.randint(180, int(self._screen_size.y)) + (self._sprite_size.y)
+        self._gameObject.transform.position.y = random.randint(180, int(self._screen_size.y)) + (self._sprite_size.y) #enemy spawn location y
 
     def start(self):
         pass
