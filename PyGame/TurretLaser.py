@@ -3,12 +3,13 @@ from Components import Component
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
+from pygame import mixer
 
 class TurretLaser(Component):
     spawn_delay = 0.15
 
 
-    def __init__(self, position, target_pos, direction) -> None:
+    def __init__(self, position, target_pos, direction, sound) -> None:
         super().__init__()
         self._position_to_set = position
         self._target_pos = target_pos
@@ -17,6 +18,7 @@ class TurretLaser(Component):
         self._animation = {}
         self.spawn_time = 0
         self.spawned = False
+        self._sound = sound
         
 
     def awake(self, game_world):
@@ -45,7 +47,7 @@ class TurretLaser(Component):
                     self.spawned = True
         elif (self.target_x - 10 <= self._gameObject.transform.position[0] <= self.target_x + 10 and
                 self.target_y - 10 <= self._gameObject.transform.position[1] <= self.target_y + 10):
-            self.create_explosion()
+            self.create_explosion(self._sound)
 
         if self._animator.is_on_final_frame():
             self._gameObject.destroy()
@@ -57,7 +59,7 @@ class TurretLaser(Component):
         for i in range(20):
             position += (self._direction)
 
-        new_object.add_component(TurretLaser(position, self._target_pos, self._direction))
+        new_object.add_component(TurretLaser(position, self._target_pos, self._direction, self._sound))
         new_object.add_component(SpriteRenderer(sprite_image=self._image))
         animator = new_object.add_component(Animator())
 
@@ -68,13 +70,12 @@ class TurretLaser(Component):
 
         self._game_world.current_State.instantiate(new_object)
 
-    def create_explosion(self):
+    def create_explosion(self, sound):
         sprite_path = "NicoEffects\\Effect_TheVortex\\30fps\\Frames\\Effect_TheVortex_1\\"
         new_object = GameObject(None)
         position = self._gameObject.transform.position + self._direction
 
-
-        new_object.add_component(PlamsaExplosion(position))
+        new_object.add_component(PlamsaExplosion(position, sound))
         new_object.add_component(SpriteRenderer(f"{sprite_path}Effect_TheVortex_1_000.png"))
         animator = new_object.add_component(Animator())
         
@@ -88,16 +89,19 @@ class TurretLaser(Component):
 
 class PlamsaExplosion(Component):
 
-    def __init__(self, position) -> None:
+    def __init__(self, position, sound) -> None:
         self._position_to_set = position
+        self._sound = sound
 
     def awake(self, game_world):
         self._gameObject.transform.position = self._position_to_set
         self._game_world = game_world
+        self._sound.set_volume(self._game_world.SFX_volume/1000)
     
     def start(self):
         self._animator = self._gameObject.get_component("Animator")
         self._animator.frame_duration = 0.05
+        self._sound.play()
     
     def update(self, delta_time):
         if self._animator.is_on_final_frame():
