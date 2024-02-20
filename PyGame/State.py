@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pygame
 import sys
 from Player import Player
+from Player import Thruster
 from MotherShip import MotherShip
 from MotherShip import MShipPart
 from MotherShip import Turret
@@ -291,12 +292,30 @@ class FirstLevelState(State):
         go_mothership.get_component("MotherShip").add_turret_part(go_turret_three, 2)
         go_mothership.get_component("MotherShip").add_turret_part(go_turret_four, 3)
         
+        go_thruster = GameObject(pygame.math.Vector2(0,0))
+        go_thruster.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png"))
+        go_thruster.add_component(Thruster())
+        thrust_anim = go_thruster.add_component(Animator())
+        thrust_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
+        thrust_anim.add_animation("Top", -160, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
+        thrust_anim.add_animation("Bottom", -20, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
+        thrust_anim.play_animation("Mid")
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
+        go_player.get_component("Player").add_thruster(go_thruster)
+
+       
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
+        self._gameObjects.append(go_thruster)
         self._gameObjects.append(go_player)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
@@ -390,6 +409,13 @@ class FirstLevelState(State):
                     collider1.collision_check(collider2)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
+        #Test
+        # Update the thruster component
+        for game_object in self._gameObjects:
+            thruster_component = game_object.get_component("Thruster")
+            
+
 
         self._effect_ground_go.update(delta_time)
         self.drawing_UI()
