@@ -26,7 +26,12 @@ class State(ABC):
     def __init__(self, game_world) -> None:
         super().__init__()
         self._gameObjects = []
+        self._colliders = []
         self._game_world = game_world
+
+    @property
+    def colliders(self):
+        return self._colliders
 
     @abstractmethod
     def awake(self, game_world):
@@ -337,12 +342,11 @@ class FirstLevelState(State):
         self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
 
     def update(self, delta_time):
-        # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("lightcoral")
-
+        
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -362,6 +366,11 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
 
@@ -509,6 +518,11 @@ class SecondLevelState(State):
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
 
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
+
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV2_go.update(delta_time)
         self._effect_groundV2_go.update(delta_time)
@@ -633,6 +647,11 @@ class ThirdLevelState(State): #Boss level
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gamObjects in self._gameObjects[:]:
             gamObjects.update(delta_time)
+
+        for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
 
         self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV3_go.update(delta_time)

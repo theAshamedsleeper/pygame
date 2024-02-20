@@ -10,7 +10,7 @@ from pygame import mixer
 class MotherShip(Component):
     CURRENT_MOUSE = None
     PREVIOUS_MOUSE = None
-    shoot_delay = 3
+    shoot_delay = 4
 
     def __init__(self) -> None:
         super().__init__()
@@ -153,7 +153,7 @@ class Turret(Component):
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = ((self._screen_size.x/7)) - 120 #Spwn Location
         self._gameObject.transform.position.y = (self._screen_size.y/2) #Spwn Location 
-        self._sound.set_volume(self._game_world.SFX_volume/1000)     
+        self._sound.set_volume(self._game_world.SFX_volume/200)     
     
     def start(self):
         return super().start()
@@ -175,46 +175,48 @@ class Turret(Component):
             pass
         
     def shoot(self, animation, sound):
-        mouse_pos = pygame.mouse.get_pos()
-        sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
-
-        dx = mouse_pos[0] - self._gameObject.transform.position.x
-        dy = mouse_pos[1] - self._gameObject.transform.position.y
-        magnitude = math.sqrt(dx ** 2 + dy ** 2)
-
-        if magnitude != 0:
-            dx /= magnitude
-            dy /= magnitude
-
-        direction = (dx, dy)
-        b_position = self._gameObject.transform.position + (direction)
-
-        for i in range(30):
-            b_position += (dx, dy)
-
-
-        go = GameObject(None)
-        go.add_component(TurretLaser(b_position, mouse_pos, direction, sound))
-        go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
-        animator = go.add_component(Animator())
-
-        animator.add_animation("Effect", f"{sprite_path}tile001.png",
-                                    f"{sprite_path}tile002.png",
-                                    f"{sprite_path}tile003.png",
-                                    f"{sprite_path}tile004.png",
-                                    f"{sprite_path}tile005.png",
-                                    f"{sprite_path}tile006.png",)
-        animator.add_loaded_animation("Plasma", animation)
+        if self._ammo >= 1:
         
-        animator.play_animation("Effect")
+            mouse_pos = pygame.mouse.get_pos()
+            sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
 
-        self._game_world.current_State.instantiate(go)
-        self._sound.play()
-        
-        self._ammo -= 1
-        if len(self._game_world.STT_ammo) > 0:
-            self._game_world.STT_ammo = self._game_world.STT_ammo[:-1]
-            self._game_world.current_State.instantiate(go)
+            dx = mouse_pos[0] - self._gameObject.transform.position.x
+            dy = mouse_pos[1] - self._gameObject.transform.position.y
+            magnitude = math.sqrt(dx ** 2 + dy ** 2)
+
+            if magnitude != 0:
+                dx /= magnitude
+                dy /= magnitude
+
+            direction = (dx, dy)
+            b_position = self._gameObject.transform.position + (direction)
+
+            for i in range(30):
+                b_position += (dx, dy)
+
+
+            go = GameObject(None)
+            go.add_component(TurretLaser(b_position, mouse_pos, direction, sound))
+            go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
+            animator = go.add_component(Animator())
+
+            animator.add_animation("Effect", f"{sprite_path}tile001.png",
+                                        f"{sprite_path}tile002.png",
+                                        f"{sprite_path}tile003.png",
+                                        f"{sprite_path}tile004.png",
+                                        f"{sprite_path}tile005.png",
+                                        f"{sprite_path}tile006.png",)
+            animator.add_loaded_animation("Plasma", animation)
             
+            animator.play_animation("Effect")
+
+            self._game_world.current_State.instantiate(go)
+            self._sound.play()
+            
+            self._ammo -= 1
+            if len(self._game_world.STT_ammo) > 0:
+                self._game_world.STT_ammo = self._game_world.STT_ammo[:-1]
+                #self._game_world.current_State.instantiate(go)
+                
         
         
