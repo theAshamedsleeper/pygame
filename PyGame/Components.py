@@ -271,3 +271,17 @@ class Collider():
     def collision_exit(self, other):
          self._other_colliders.remove(other)
          print("Collision exit")
+         
+class EnemyLaser(Component):
+    def awake(self, game_world):
+        self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+    def start(self):
+        pass
+    def update(self, delta_time):
+
+        speed = -10
+        direction = pygame.math.Vector2(speed,0)
+        self._gameObject.transform.translate(direction)
+        
+        if self._gameObject.transform.position.x > self._screen_size.x:
+            self._gameObject.destroy()
