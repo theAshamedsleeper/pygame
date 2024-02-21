@@ -7,7 +7,6 @@ from State import loosOrVicState
 from GameObject import GameObject
 
 class GameWorld:
-    
     def __init__(self) -> None:
         pygame.init()  
 

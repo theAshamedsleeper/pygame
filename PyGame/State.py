@@ -407,8 +407,6 @@ class FirstLevelState(State):
 
     def update(self, delta_time):
         #Game not paused
-        # fill the screen with a color to wipe away anything from last frame
-        #self._game_world.screen.fill("lightcoral")
         self.enemy_timer +=delta_time
 
 
@@ -430,11 +428,7 @@ class FirstLevelState(State):
                     collider1.collision_check(collider2)
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
             
-        #Test
-        # Update the thruster component
-        for game_object in self._gameObjects:
-            thruster_component = game_object.get_component("Thruster")
-            
+        
         self._effect_ground_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay:
@@ -478,10 +472,7 @@ class FirstLevelState(State):
                             self.do_options_input(1)
                             #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                 self._menu_sele = max(0, min(2, self._menu_sele))
-        
                 
-                #   self._music = mixer.music.stop()
-                #    self._game_world.ChangeState(MenuState(self._game_world))
     def do_menu_input(self):
         match self._menu_sele:
             case 0:#new game
@@ -544,8 +535,6 @@ class FirstLevelState(State):
         screen.blit(text_surface,(10, 10))  
     
 
-
-
     
 class SecondLevelState(State):  
 
@@ -553,6 +542,18 @@ class SecondLevelState(State):
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
 
+        self._player_score = 0
+        self._menu_sele = 0
+        self._options_sele = False  
+        self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
+        self._graphics_opt = 1      
+        #So its reset from the start
+        self._game_world.STT_ammo = "||||"
+        
+        #not selected
+        self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
+        #Selected
+        self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 25)
         
         self._backgroundV2_image_path ="BackgroundV3.0.png"
         self._scroll_speed = 50
@@ -579,8 +580,6 @@ class SecondLevelState(State):
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
-        mixer.music.play(-1)
-        mixer.music.set_volume(.03)
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
@@ -620,7 +619,11 @@ class SecondLevelState(State):
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
-
+    
+    def draw_text(self,text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self._game_world.screen.blit(img,(x,y))
+        
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
@@ -636,7 +639,8 @@ class SecondLevelState(State):
 
     def awake(self, game_world):
         super().awake(game_world)
-        
+        self._music = mixer.music.play(-1)
+        self._music= mixer.music.set_volume(self._game_world.music_volume/1000)        
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)        
 
@@ -645,36 +649,170 @@ class SecondLevelState(State):
         for gameObject in self._gameObjects[:]:
             gameObject.start()
 
+    def move_to_endscreen(self, Win):#Win is bool
+        self._music = mixer.music.pause()
+        self._game_world.score = self._player_score
+        self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
+    
+    def drawing_UI(self):
+        self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
+        self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
+        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
+        
+        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        
+        if self._game_world.worldPause == True and self._options_sele == False:
+            match self._menu_sele:
+                case 0: #back but
+                    self.draw_text("Back", self._text_font_sel,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 1: #Options but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font_sel,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 2: #Menu but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font_sel,(255, 255, 255), 500, 460)
+        elif self._game_world.worldPause == True and self._options_sele == True:
+            match self._menu_sele:
+                case 0:
+                    self.draw_text("Music", self._text_font_sel, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 1:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font_sel, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font_sel, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 2:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font_sel, (255, 255, 255), 500, 460)    
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (255, 255, 255), 750, 460)
+
     def update(self, delta_time):
         # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("lightcoral")
         self.enemy_timer +=delta_time
-
 
         self._backgroundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
         self._effect_groundV2_go.update(delta_time)
 
+        self.fps_counter(self.clock, self._game_world.screen)
+        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+        
+        if self._game_world.worldPause == False:
+            #Makes a copy om _gameObjects and runs through that instead of the orginal
+            for gamObjects in self._gameObjects[:]:
+                gamObjects.update(delta_time)
+
+            for i, collider1 in enumerate(self._colliders):
+                for j in range(i + 1, len(self._colliders)):
+                    collider2 = self._colliders[j]
+                    collider1.collision_check(collider2)
+            self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+            
+        self._effect_groundV2_go.update(delta_time)
+        
         if self.enemy_timer >= self.enemy_delay:
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
-        self.fps_counter(self.clock, self._game_world.screen)
-        delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
 
-        #Makes a copy om _gameObjects and runs through that instead of the orginal
-        for gamObjects in self._gameObjects[:]:
-            gamObjects.update(delta_time)
+        
+        self.drawing_UI()
+        self.handle_input()
 
-        for i, collider1 in enumerate(self._colliders):
-                for j in range(i + 1, len(self._colliders)):
-                    collider2 = self._colliders[j]
-                    collider1.collision_check(collider2)
+    def handle_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p and self._game_world.worldPause == False:
+                    self._game_world.worldPause = True
+                    #self.pause_game()
+                elif self._game_world.worldPause == True and event.key == pygame.K_p:
+                    self._game_world.worldPause = False
+                    self._options_sele = False
+                elif event.key == pygame.K_COMMA:
+                    self.move_to_endscreen(True)
+                if self._game_world.worldPause == True:
+                    if event.key == pygame.K_SPACE: 
+                        if self._options_sele == False:
+                            self.do_menu_input()
+                        elif self._options_sele == True:
+                            self._options_sele = False
+                    elif event.key == pygame.K_UP:
+                        self._menu_sele -= 1
+                    elif event.key == pygame.K_DOWN:
+                        self._menu_sele += 1
+                    if self._options_sele == True:
+                        if event.key == pygame.K_LEFT:
+                            #self._menu_sound.play()
+                            self.do_options_input(-1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                        elif event.key == pygame.K_RIGHT:
+                            #self._menu_sound.play()
+                            self.do_options_input(1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                self._menu_sele = max(0, min(2, self._menu_sele))
+                        
+    def do_menu_input(self):
+        match self._menu_sele:
+            case 0:#new game
+                self._game_world.worldPause = False
+            case 1:#Options
+                    self._options_sele = True
+            case 2:# back to menu
+                self._options_sele == False
+                self._game_world.worldPause = False
+                self._music = mixer.music.pause()   
+                level = MenuState(self._game_world)
+                self._game_world.ChangeToNewState(level)
+    tmp = 1
+    def do_options_input(self, value):
+        self._opt_menu_sel += value
+        self._opt_menu_sel = max(0, min(2, self._opt_menu_sel))
+        self.tmp += value
+        self.tmp = max(0, min(2, self.tmp))
 
-        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-        self._fore_groundV2_go.update(delta_time)
-        self._effect_groundV2_go.update(delta_time)
-
+        #Which option the player is on
+        match self._menu_sele:
+            case 0: #Music Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.music_volume += 10     
+                    if self._game_world.music_volume > 100:
+                        self._game_world.music_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.music_volume -= 10
+                    if self._game_world.music_volume < 0:
+                        self._game_world.music_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
+            case 1: #sfx Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.SFX_volume += 10     
+                    if self._game_world.SFX_volume > 100:
+                        self._game_world.SFX_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.SFX_volume -= 10     
+                    if self._game_world.SFX_volume < 0:
+                        self._game_world.SFX_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.SFX_Volume/1000)
+            case 2:#Grapchis options
+                self._graphics_opt = self.tmp
+        #Resets the pos to 1
+        self._opt_menu_sel = 1
+        
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
@@ -698,6 +836,19 @@ class ThirdLevelState(State): #Boss level
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+
+        self._player_score = 0
+        self._menu_sele = 0
+        self._options_sele = False  
+        self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
+        self._graphics_opt = 1      
+        #So its reset from the start
+        self._game_world.STT_ammo = "||||"
+        
+        #not selected
+        self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
+        #Selected
+        self._text_font_sel = pygame.font.Font("Assets\\Font\\ARCADE_I.TTF", 25)
 
         self._backgroundv3_image_path ="BackgroundV4.4.png"
         self._scroll_speed = 50
@@ -725,8 +876,6 @@ class ThirdLevelState(State): #Boss level
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
-        mixer.music.play(-1)
-        mixer.music.set_volume(.03)
 
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
@@ -767,6 +916,10 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
+        def draw_text(self,text, font, text_col, x, y):
+            img = font.render(text, True, text_col)
+            self._game_world.screen.blit(img,(x,y))
+    
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
@@ -783,7 +936,8 @@ class ThirdLevelState(State): #Boss level
 
     def awake(self, game_world):
         super().awake(game_world)
-        
+        self._music = mixer.music.play(-1)
+        self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
         for gameObject in self._gameObjects[:]:
             gameObject.awake(self._game_world)        
 
@@ -792,34 +946,167 @@ class ThirdLevelState(State): #Boss level
         for gameObject in self._gameObjects[:]:
             gameObject.start()
 
-    def update(self, delta_time):
-        # fill the screen with a color to wipe away anything from last frame
-        self._game_world.screen.fill("lightcoral")
-        self._backgroundv3_go.update(delta_time)
-        self._middle_groundV3_go.update(delta_time)
-        self.enemy_timer +=delta_time
+    def move_to_endscreen(self, Win):#Win is bool
+        self._music = mixer.music.pause()
+        self._game_world.score = self._player_score
+        self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
 
+    def drawing_UI(self):
+        self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
+        self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
+        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
+        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        
+        if self._game_world.worldPause == True and self._options_sele == False:
+            match self._menu_sele:
+                case 0: #back but
+                    self.draw_text("Back", self._text_font_sel,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 1: #Options but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font_sel,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font,(255, 255, 255), 500, 460)
+                case 2: #Menu but
+                    self.draw_text("Back",self._text_font,(255, 255, 255), 500, 360)
+                    self.draw_text("Options",self._text_font,(255, 255, 255), 500, 410)
+                    self.draw_text("Menu",self._text_font_sel,(255, 255, 255), 500, 460)
+        elif self._game_world.worldPause == True and self._options_sele == True:
+            match self._menu_sele:
+                case 0:
+                    self.draw_text("Music", self._text_font_sel, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font_sel, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 1:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font_sel, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font_sel, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font, (255, 255, 255), 500, 460)
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font, (255, 255, 255), 750, 460)
+                case 2:
+                    self.draw_text("Music", self._text_font, (255, 255, 255), 500, 360)
+                    self.draw_text(f"{self._game_world.music_volume}", self._text_font, (255, 255, 255), 700, 360)
+                    self.draw_text("SFX", self._text_font, (255, 255, 255), 500, 410)
+                    self.draw_text(f"{self._game_world.SFX_volume}", self._text_font, (255, 255, 255), 700, 410)
+                    self.draw_text("Graphics", self._text_font_sel, (255, 255, 255), 500, 460)    
+                    self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (255, 255, 255), 750, 460)
+
+    def update(self, delta_time):
+        
+        self.enemy_timer +=delta_time
+        
+        self._backgroundv3_go.update(delta_time)
+        self._fore_groundV3_go.update(delta_time)
+        self._middle_groundV3_go.update(delta_time)
+
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
+        
+        if self._game_world.worldPause == False:
+            #Makes a copy om _gameObjects and runs through that instead of the orginal
+            for gamObjects in self._gameObjects[:]:
+                gamObjects.update(delta_time)
 
-        #Makes a copy om _gameObjects and runs through that instead of the orginal
-        for gamObjects in self._gameObjects[:]:
-            gamObjects.update(delta_time)
-
-        for i, collider1 in enumerate(self._colliders):
+            for i, collider1 in enumerate(self._colliders):
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
-
-        self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-        self._fore_groundV3_go.update(delta_time)
+            self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+            
         self._effect_groundv3_go.update(delta_time)
 
         if self.enemy_timer >= self.enemy_delay:
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
+        
+        self.drawing_UI()
+        self.handle_input()
+    
+    def handle_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p and self._game_world.worldPause == False:
+                    self._game_world.worldPause = True
+                    #self.pause_game()
+                elif self._game_world.worldPause == True and event.key == pygame.K_p:
+                    self._game_world.worldPause = False
+                    self._options_sele = False
+                elif event.key == pygame.K_COMMA:
+                    self.move_to_endscreen(True)
+                if self._game_world.worldPause == True:
+                    if event.key == pygame.K_SPACE: 
+                        if self._options_sele == False:
+                            self.do_menu_input()
+                        elif self._options_sele == True:
+                            self._options_sele = False
+                    elif event.key == pygame.K_UP:
+                        self._menu_sele -= 1
+                    elif event.key == pygame.K_DOWN:
+                        self._menu_sele += 1
+                    if self._options_sele == True:
+                        if event.key == pygame.K_LEFT:
+                            #self._menu_sound.play()
+                            self.do_options_input(-1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                        elif event.key == pygame.K_RIGHT:
+                            #self._menu_sound.play()
+                            self.do_options_input(1)
+                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
+                self._menu_sele = max(0, min(2, self._menu_sele))
+                
+    def do_menu_input(self):
+        match self._menu_sele:
+            case 0:#new game
+                self._game_world.worldPause = False
+            case 1:#Options
+                    self._options_sele = True
+            case 2:# back to menu
+                self._options_sele == False
+                self._game_world.worldPause = False
+                self._music = mixer.music.pause()   
+                level = MenuState(self._game_world)
+                self._game_world.ChangeToNewState(level)
+    tmp = 1
+    def do_options_input(self, value):
+        self._opt_menu_sel += value
+        self._opt_menu_sel = max(0, min(2, self._opt_menu_sel))
+        self.tmp += value
+        self.tmp = max(0, min(2, self.tmp))
 
+        #Which option the player is on
+        match self._menu_sele:
+            case 0: #Music Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.music_volume += 10     
+                    if self._game_world.music_volume > 100:
+                        self._game_world.music_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.music_volume -= 10
+                    if self._game_world.music_volume < 0:
+                        self._game_world.music_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
+            case 1: #sfx Volumen
+                if self._opt_menu_sel == 2:
+                    self._game_world.SFX_volume += 10     
+                    if self._game_world.SFX_volume > 100:
+                        self._game_world.SFX_volume = 100     
+                elif self._opt_menu_sel == 0:
+                    self._game_world.SFX_volume -= 10     
+                    if self._game_world.SFX_volume < 0:
+                        self._game_world.SFX_volume = 0     
+                self._music= mixer.music.set_volume(self._game_world.SFX_Volume/1000)
+            case 2:#Grapchis options
+                self._graphics_opt = self.tmp
+        #Resets the pos to 1
+        self._opt_menu_sel = 1
     def makeTurret(self, string):
         turret = GameObject(pygame.math.Vector2(0,0))
         turret.add_component(SpriteRenderer(string))
@@ -834,11 +1121,6 @@ class ThirdLevelState(State): #Boss level
         font = pygame.font.SysFont("Verdana", 15)
         text_surface = font.render(fps_text, True, BLACK)
         screen.blit(text_surface,(10, 10))  
-
-
-
-
-
 
     
 class loosOrVicState(State):
