@@ -302,10 +302,10 @@ class FirstLevelState(State):
         
         thrust_anim.add_animation("Dead", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\Dead.png",
                                   )
-        thrust_anim.add_animation("Top", -155, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Top", -135, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
-        thrust_anim.add_animation("Bottom", -25, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Bottom", -45, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
         thrust_anim.play_animation("Dead")
@@ -622,10 +622,10 @@ class SecondLevelState(State):
         
         thrust_anim.add_animation("Dead", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\Dead.png",
                                   )
-        thrust_anim.add_animation("Top", -155, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Top", -135, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
-        thrust_anim.add_animation("Bottom", -25, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Bottom", -45, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
         thrust_anim.play_animation("Dead")
@@ -945,10 +945,10 @@ class ThirdLevelState(State): #Boss level
         
         thrust_anim.add_animation("Dead", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\Dead.png",
                                   )
-        thrust_anim.add_animation("Top", -155, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Top", -135, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
-        thrust_anim.add_animation("Bottom", -25, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+        thrust_anim.add_animation("Bottom", -45, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
         thrust_anim.play_animation("Dead")
