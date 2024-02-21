@@ -133,11 +133,7 @@ class Thruster(Component):
         self._ship_movement = pygame.math.Vector2(0,0)
         self._rotation = -90
 
-    def draw_flame(self, surface, ship_position):
-        flame_image = pygame.Surface((10, 20))
-        flame_image.fill((255, 0, 0))  
-        flame_rect = flame_image.get_rect(midbottom=ship_position) # tegnet ved skibets bund hopefully?
-        surface.blit(flame_image, flame_rect)
+
 
     @property
     def ship_movement(self):
