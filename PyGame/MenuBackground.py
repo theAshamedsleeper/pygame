@@ -9,7 +9,7 @@ class MenuBackground(Component):
         super().__init__()
         self._game_world = game_world
         self._background_image = pygame.image.load(f"Assets\\ArcticAssets\\RunningBackgrounds\\{image_path}")
-      
+
         self._x_position = 0
 
         # Scale the background image to fit the screen size
