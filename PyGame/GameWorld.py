@@ -24,7 +24,7 @@ class GameWorld:
         self._STT_ammo_count = "||||"
         self._score = 0
         self._game_paused = False
-        menu = MenuState(self)
+        menu = FirstLevelState(self)
         self._currentState = menu
         
 

@@ -11,12 +11,10 @@ from Components import SpriteRenderer
 from Components import Animator
 from Components import Laser
 import pygame.locals
-import threading
 from pygame import mixer
 from Background import Background
 from MenuBackground import MenuBackground
 from SavingScoreJson import SavingScore
-#from Enemy import EnemySpawner
 from Enemy import Enemy
 
 
@@ -232,6 +230,8 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+        self.enemy_amount = []
+        self.enemy_max = 20 #max amount of enemies that spawn in this level
 
 
         self._player_score = 0
@@ -267,7 +267,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 5 #Sekunder mellem enemies
+        self.enemy_delay = 0.5 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -331,6 +331,7 @@ class FirstLevelState(State):
         self._game_world.screen.blit(img,(x,y))
 
     def spawn_enemy(self):
+        self.enemy_amount.append("enemy added")
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
         go_enemy.add_component(Enemy())
@@ -431,7 +432,8 @@ class FirstLevelState(State):
         
         self._effect_ground_go.update(delta_time)
         
-        if self.enemy_timer >= self.enemy_delay:
+        
+        if self.enemy_timer >= self.enemy_delay and len(self.enemy_amount) <=self.enemy_max:
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
@@ -541,6 +543,8 @@ class SecondLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+        self.enemy_amount = []
+        self.enemy_max = 30 #max amount of enemies that spawn in this level
 
         self._player_score = 0
         self._menu_sele = 0
@@ -706,6 +710,7 @@ class SecondLevelState(State):
         self._backgroundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
         self._effect_groundV2_go.update(delta_time)
+        
 
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
@@ -723,7 +728,7 @@ class SecondLevelState(State):
             
         self._effect_groundV2_go.update(delta_time)
         
-        if self.enemy_timer >= self.enemy_delay:
+        if self.enemy_timer >= self.enemy_delay and len(self.enemy_amount) <=self.enemy_max:
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
@@ -836,6 +841,7 @@ class ThirdLevelState(State): #Boss level
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+        
 
         self._player_score = 0
         self._menu_sele = 0
