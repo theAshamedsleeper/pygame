@@ -145,10 +145,11 @@ class Animator(Component):
         self._frame_duration = value
 
 
-    def add_animation(self, name, *args):
+    def add_animation(self, name, rotation, *args):
         frames =[]
         for arg in args:
             sprite_image = pygame.image.load(f"Assets\\{arg}").convert_alpha()
+            sprite_image = pygame.transform.rotate(sprite_image, rotation)
             frames.append(sprite_image)
 
         self._animations[name] = frames
@@ -209,7 +210,7 @@ class Animator(Component):
         # Get the current animation sequence
         animation_sequence = self._animations[self._current_animation]
         # Check if the current frame index is at the last frame
-        is_final_frame = self._current_frame_index == len(animation_sequence) - 1
+        is_final_frame = self._current_frame_index >= len(animation_sequence) - 1
         if is_final_frame:
             # Reset the frame index to loop the animation
             self._current_frame_index = 0
@@ -230,3 +231,58 @@ class Laser(Component):
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
         #   print("Remove_check :-)")
+            
+
+class Collider():
+    def __init__(self) -> None:
+        self._other_colliders = []
+
+    def awake(self, game_world):
+        sr = self.gameObject.get_component("SpriteRenderer")
+        self._collision_box = sr.sprite.rect
+        game_world.colliders.append(self)
+
+    @property
+    def collision_box(self):
+        return self._collision_box
+    
+    def collision_check(self, other):
+        is_rect_colliding = self._collision_box.colliderect(other.collision_box)
+        is_already_colliding = other in self._other_colliders
+
+        if is_rect_colliding:
+            if not is_already_colliding:
+                self.collision_enter(other)
+                other.collision_enter(self)
+        else:
+            if is_already_colliding:
+                self.collision_exit(other)
+                other.collision_exit(self)
+
+    def start(self):
+        pass
+
+    def update(self, delta_time):
+        pass
+
+    def collision_enter(self, other):
+        self._other_colliders.append(other)
+        print("Collision enter")
+
+    def collision_exit(self, other):
+         self._other_colliders.remove(other)
+         print("Collision exit")
+         
+class EnemyLaser(Component):
+    def awake(self, game_world):
+        self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+    def start(self):
+        pass
+    def update(self, delta_time):
+
+        speed = -10
+        direction = pygame.math.Vector2(speed,0)
+        self._gameObject.transform.translate(direction)
+        
+        if self._gameObject.transform.position.x > self._screen_size.x:
+            self._gameObject.destroy()
