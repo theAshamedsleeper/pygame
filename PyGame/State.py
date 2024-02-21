@@ -10,6 +10,7 @@ from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
 from Components import Laser
+from Components import Collider
 import pygame.locals
 import threading
 from pygame import mixer
@@ -345,6 +346,7 @@ class FirstLevelState(State):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
         go_enemy.add_component(Enemy())
+        go_enemy.add_component(Collider())
 
         self.instantiate(go_enemy)
 
@@ -664,6 +666,7 @@ class SecondLevelState(State):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
         go_enemy.add_component(Enemy())
+        go_enemy.add_component(Collider())
 
         self.instantiate(go_enemy)
 
@@ -985,7 +988,7 @@ class ThirdLevelState(State): #Boss level
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
         go_enemy.add_component(Enemy())
-
+        go_enemy.add_component(Collider())
         self.instantiate(go_enemy)
 
 

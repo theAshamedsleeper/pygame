@@ -4,6 +4,7 @@ from pygame import mixer
 from GameObject import GameObject
 from Components import Laser
 from Components import SpriteRenderer
+from Components import Collider
 
 
 class Player(Component):
@@ -110,6 +111,7 @@ class Player(Component):
         self.shoot_sound.play()
         projectile = GameObject(None)
         sr = projectile.add_component(SpriteRenderer("tile001.png"))
+        projectile.add_component(Collider())
         
         projectile.add_component(Laser())
 
