@@ -53,7 +53,7 @@ class Player(Component):
             animation = self._thruster.get_component("Animator")
             animation.play_animation("Bottom")
             self._thruster.transform.position.y = self._gameObject.transform.position.y +2
-            self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x  
+            self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x  
 
             #Main
             self._thrusterMain.transform.position.y = self._gameObject.transform.position.y -10
@@ -67,7 +67,7 @@ class Player(Component):
             animation = self._thruster.get_component("Animator")
             animation.play_animation("Top")
             self._thruster.transform.position.y = self._gameObject.transform.position.y -14
-            self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
+            self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x
 
             #Main
             self._thrusterMain.transform.position.y = self._gameObject.transform.position.y +10
