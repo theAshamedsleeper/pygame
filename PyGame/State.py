@@ -744,7 +744,7 @@ class SecondLevelState(State):
 
         self._backgroundV2_go.update(delta_time)
         self._middle_groundV2_go.update(delta_time)
-        self._effect_groundV2_go.update(delta_time)
+        
 
         self.fps_counter(self.clock, self._game_world.screen)
         delta_time = self.clock.tick(60) / 1000.0 # limits FPS to 60
@@ -759,7 +759,7 @@ class SecondLevelState(State):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-            
+        self._fore_groundV2_go.update(delta_time)  
         self._effect_groundV2_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay:
@@ -1065,7 +1065,6 @@ class ThirdLevelState(State): #Boss level
         self.enemy_timer +=delta_time
         
         self._backgroundv3_go.update(delta_time)
-        self._fore_groundV3_go.update(delta_time)
         self._middle_groundV3_go.update(delta_time)
 
         self.fps_counter(self.clock, self._game_world.screen)
@@ -1081,7 +1080,7 @@ class ThirdLevelState(State): #Boss level
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
-            
+        self._fore_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
 
         if self.enemy_timer >= self.enemy_delay:
