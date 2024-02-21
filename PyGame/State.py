@@ -6,6 +6,7 @@ from Player import Thruster
 from MotherShip import MotherShip
 from MotherShip import MShipPart
 from MotherShip import Turret
+from Boss import Boss
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
@@ -337,6 +338,12 @@ class FirstLevelState(State):
 
         self.instantiate(go_enemy)
 
+    def spawn_boss(self):  
+        go_boss = GameObject(pygame.math.Vector2(1350,510))
+        go_boss.add_component(SpriteRenderer("Spaceships\\ship_41.png"))
+        go_boss.add_component(Boss())
+        self.instantiate(go_boss)
+
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
         gameObject.start()
@@ -353,6 +360,7 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gameObject in self._gameObjects[:]:
             gameObject.start()
+        self.spawn_boss()
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
@@ -429,7 +437,7 @@ class FirstLevelState(State):
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
             
         
-        self._effect_ground_go.update(delta_time)
+        # self._effect_ground_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay:
             self.spawn_enemy()

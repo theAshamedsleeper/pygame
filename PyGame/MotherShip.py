@@ -174,36 +174,6 @@ class Turret(Component):
             pass
         
     def shoot(self, animation, sound):
-        mouse_pos = pygame.mouse.get_pos()
-        sprite_path = "space_breaker_asset\\Weapons\\Small\\Laser\\turretlaserAnim\\"
-
-        dx = mouse_pos[0] - self._gameObject.transform.position.x
-        dy = mouse_pos[1] - self._gameObject.transform.position.y
-        magnitude = math.sqrt(dx ** 2 + dy ** 2)
-
-        if magnitude != 0:
-            dx /= magnitude
-            dy /= magnitude
-
-        direction = (dx, dy)
-        b_position = self._gameObject.transform.position + (direction)
-
-        for i in range(30):
-            b_position += (dx, dy)
-
-
-        go = GameObject(None)
-        go.add_component(TurretLaser(b_position, mouse_pos, direction, sound))
-        go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
-        animator = go.add_component(Animator())
-
-        animator.add_animation("Effect", 0, f"{sprite_path}tile001.png",
-                                    f"{sprite_path}tile002.png",
-                                    f"{sprite_path}tile003.png",
-                                    f"{sprite_path}tile004.png",
-                                    f"{sprite_path}tile005.png",
-                                    f"{sprite_path}tile006.png",)
-        animator.add_loaded_animation("Plasma", animation)
         if self._ammo >= 1:
         
             mouse_pos = pygame.mouse.get_pos()
@@ -229,7 +199,7 @@ class Turret(Component):
             go.add_component(SpriteRenderer(f"{sprite_path}tile000.png"))
             animator = go.add_component(Animator())
 
-            animator.add_animation("Effect", f"{sprite_path}tile001.png",
+            animator.add_animation("Effect", 0,f"{sprite_path}tile001.png",
                                         f"{sprite_path}tile002.png",
                                         f"{sprite_path}tile003.png",
                                         f"{sprite_path}tile004.png",
