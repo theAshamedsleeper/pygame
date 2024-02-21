@@ -30,7 +30,8 @@ class Player(Component):
         self._gameObject.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2) #player spawn location y
 
     def start(self):
-        self._thruster.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
+        pass
+#        self._thruster.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()

@@ -17,6 +17,7 @@ from Background import Background
 from MenuBackground import MenuBackground
 from SavingScoreJson import SavingScore
 from Enemy import Enemy
+from EnemyLvl2 import EnemyLvl2
 
 
 
@@ -633,7 +634,7 @@ class SecondLevelState(State):
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("ship_1782.png"))
-        go_enemy.add_component(Enemy())
+        go_enemy.add_component(EnemyLvl2())
         go_enemy.add_component(Collider())
 
         self.instantiate(go_enemy)
