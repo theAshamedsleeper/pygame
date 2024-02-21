@@ -301,12 +301,12 @@ class FirstLevelState(State):
         
         thrust_anim.add_animation("Dead", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\Dead.png",
                                   )
-        thrust_anim.add_animation("Top", -135, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
-        thrust_anim.add_animation("Bottom", -45, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
+        thrust_anim.add_animation("Top", -155, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
+        thrust_anim.add_animation("Bottom", -25, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01d.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01f.png",)
         thrust_anim.play_animation("Dead")
 
         go_thrusterMain = GameObject(pygame.math.Vector2(0,0))
@@ -315,7 +315,7 @@ class FirstLevelState(State):
         thrustMain_anim = go_thrusterMain.add_component(Animator())
         thrustMain_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01b.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png",)
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",)
         thrustMain_anim.play_animation("Mid")
 
         go_player = GameObject(pygame.math.Vector2(0,0))
