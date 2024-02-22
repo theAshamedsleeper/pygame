@@ -22,6 +22,9 @@ class GameObject:
     
     def get_component(self, component_name):
         return self._components.get(component_name, None)
+    
+    def has_component(self, component_name):
+        return component_name in self._components
 
     def awake(self, game_world):
         for component in self._components.values():

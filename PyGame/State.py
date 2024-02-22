@@ -345,7 +345,7 @@ class FirstLevelState(State):
 
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
         go_enemy.add_component(Enemy())
         go_enemy.add_component(Collider())
 
@@ -447,6 +447,7 @@ class FirstLevelState(State):
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
+            self._colliders = [obj for obj in self._colliders if not obj.gameObject._is_destroyed]
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
             
         
@@ -672,7 +673,7 @@ class SecondLevelState(State):
         
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
         go_enemy.add_component(Enemy())
         go_enemy.add_component(Collider())
 

@@ -118,6 +118,8 @@ class SpriteRenderer(Component):
         self._sprite.rect.center = self.gameObject.transform.position
         self._game_world.screen.blit(self._sprite_image, self._sprite.rect)
 
+        pygame.draw.rect(self._game_world.screen, (255, 0, 0), self._sprite.rect, 1)
+
     def scale(self, scale_factor):
         if scale_factor <=0:
             raise ValueError("Scale factor must be greater than zero")
@@ -125,6 +127,11 @@ class SpriteRenderer(Component):
         self.sprite_image = pygame.transform.scale(self._og_sprite_image,
                                                    (int(self.og_sprite_image.get_width() * scale_factor),
                                                    int(self._og_sprite_image.get_height() * scale_factor)))
+        
+        # Scale the rectangle
+        original_center = self._sprite.rect.center
+        self._sprite.rect.size = self.sprite_image.get_size()
+        self._sprite.rect.center = original_center
         
         
 class Animator(Component):
@@ -225,6 +232,12 @@ class Animator(Component):
 class Laser(Component):
     def awake(self, game_world):
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+        self._damage = 2
+        collider = self._gameObject.get_component("Collider")
+        collider.subscribe("collision_enter",self.on_collision_enter)
+        collider.subscribe("collision_exit", self.on_collision_exit)
+        collider.subscribe("pixel_collision_enter", self.on_pixel_collision_enter)
+        collider.subscribe("pixel_collision_exit", self.on_pixel_collision_exit)
     def start(self):
         pass
     def update(self, delta_time):
@@ -236,6 +249,21 @@ class Laser(Component):
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
         #   print("Remove_check :-)")
+            
+    def on_collision_enter(self, other):
+        print("collision enter")
+
+    def on_collision_exit(self, other):
+        print("collision exit")
+
+    def on_pixel_collision_enter(self, other):
+        if other.gameObject.has_component("Enemy"):
+            enemy = other.gameObject.get_component("Enemy")
+            enemy.health -= self._damage
+            self._gameObject.destroy()
+
+    def on_pixel_collision_exit(self, other):
+        print("pixel collision exit")
             
 
 class Collider():
@@ -318,6 +346,7 @@ class Collider():
 class EnemyLaser(Component):
     def awake(self, game_world):
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+        
     def start(self):
         pass
     def update(self, delta_time):
@@ -328,3 +357,5 @@ class EnemyLaser(Component):
         
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
+
+    
