@@ -17,7 +17,7 @@ class Boss(Component):
         self._shoot_delay = 4.77
         self._shoot_timer = 0
         self._spawn_timer = 0
-        self._spawn_delay =4
+        self._spawn_delay =4.77
     
     def awake(self, game_world):
         self._game_world = game_world
