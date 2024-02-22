@@ -13,7 +13,7 @@ class Boss(Component):
         super().__init__()
         self.shoot_sound = mixer.Sound("Assets\\Audio\\scificannon.mp3")
         self.scale_factor = scale_factor
-        self._health = 10
+        self._health = 60
         self._shoot_delay = 4
         self._shoot_timer = 0
         self._spawn_timer = 0
@@ -53,7 +53,7 @@ class Boss(Component):
             self.spawn_minnions()
             self._spawn_timer = 0 
         
-    def Lose_health(self, damage):
+    def lose_health(self, damage):
         self._health -= damage
         if self._health >= 0:
             self._gameObject.destroy()
