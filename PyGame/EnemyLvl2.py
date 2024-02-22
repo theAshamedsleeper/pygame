@@ -31,7 +31,7 @@ class EnemyLvl2(Component):
     
     def awake(self, game_world):
         self._game_world = game_world
-        self._shoot_sound.set_volume(self._game_world.SFX_volume/2500)
+        self._shoot_sound.set_volume(self._game_world.SFX_volume/1700)
 
         sr = self._gameObject.get_component("SpriteRenderer")
         sr.scale(self._scale_factor)
