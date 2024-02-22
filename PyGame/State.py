@@ -988,9 +988,9 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
-        def draw_text(self,text, font, text_col, x, y):
-            img = font.render(text, True, text_col)
-            self._game_world.screen.blit(img,(x,y))
+    def draw_text(self,text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self._game_world.screen.blit(img,(x,y))
     
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
