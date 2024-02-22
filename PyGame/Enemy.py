@@ -18,7 +18,7 @@ class Enemy(Component):
         self._direction = 1  # Initial direction: 1 for down, -1 for up
         self._shoot_delay = 4.77
         self._shoot_timer = 0
-        self._shoot_sound = mixer.Sound("Assets\\Audio\\DPitchBullet.mp3")
+        self._shoot_sound = mixer.Sound("Assets\\Audio\\BPitchBullet.mp3")
         self._health = 3
 
     @property
