@@ -24,8 +24,16 @@ class MotherShip(Component):
         self._shoot_time = 0
         self._plasma_anim = []
         self._plasma_sound = None
-        self._health = 200
+        self._current_health = 100
+        self._max_health = 100
 
+    @property
+    def current_health(self):
+        return self._current_health
+    
+    @property
+    def max_health(self):
+        return self._max_health
     
     
     def awake(self, game_world):
@@ -50,6 +58,14 @@ class MotherShip(Component):
     def update(self, delta_time):
         
         self._shoot_time += delta_time
+
+        hp_text = f"HP: {self._current_health}/{self._max_health}"
+        font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25) 
+        text_surface = font.render(hp_text, True, (255, 255, 255))  
+        text_rect = text_surface.get_rect()
+        text_rect.center = (1000, 38) 
+        self._game_world.screen.blit(text_surface, text_rect)
+
         
         if self._shoot_time >= self.shoot_delay:
             
@@ -78,6 +94,13 @@ class MotherShip(Component):
                         turret.shoot(self._plasma_anim, self._plasma_sound)
                         self._shot_index = 1
                         self._shoot_time = 0
+
+        if self._current_health <= 0:
+            self._game_world.current_State.move_to_endscreen(False)  
+
+    def take_damage(self, damage_amount):
+        self._current_health -= damage_amount
+          
 
     def add_ship_part(self, go, choice):
         if choice == 0:

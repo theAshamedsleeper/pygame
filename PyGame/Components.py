@@ -251,7 +251,9 @@ class Laser(Component):
         #   print("Remove_check :-)")
             
     def on_collision_enter(self, other):
-        print("collision enter")
+        if other.gameObject.has_component("EnemyLaser"):
+            laser = other.gameObject.get_component("EnemyLaser")
+            laser.gameObject.destroy()
 
     def on_collision_exit(self, other):
         print("collision exit")
@@ -260,10 +262,13 @@ class Laser(Component):
         if other.gameObject.has_component("Enemy"):
             enemy = other.gameObject.get_component("Enemy")
             enemy.health -= self._damage
+            self._gameObject.destroy()
 
         if other.gameObject.has_component("EnemyLvl2"):
             enemy = other.gameObject.get_component("EnemyLvl2")
             enemy.health -= self._damage
+            self._gameObject.destroy()
+
 
     def on_pixel_collision_exit(self, other):
         print("pixel collision exit")
@@ -276,9 +281,9 @@ class Collider():
         self._listeners = {}
 
     def awake(self, game_world):
-        sr = self.gameObject.get_component("SpriteRenderer")
-        self._collision_box = sr.sprite_rect
-        self._sprite_mask = sr.sprite_mask
+        self.sr = self.gameObject.get_component("SpriteRenderer")
+        self._collision_box = self.sr.sprite_rect
+        self._sprite_mask = self.sr.sprite_mask
         game_world.current_State.colliders.append(self)
 
     @property
@@ -293,6 +298,7 @@ class Collider():
         self._listeners[service] = method
     
     def collision_check(self, other):
+        self._collision_box = self.sr.sprite_rect
         is_rect_colliding = self._collision_box.colliderect(other.collision_box)
         is_already_colliding = other in self._other_colliders
 
@@ -347,8 +353,27 @@ class Collider():
             self._listeners["pixel_collision_exit"](other)
          
 class EnemyLaser(Component):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._damage = 2
+        
     def awake(self, game_world):
+        self._game_world = game_world
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+        collider = self._gameObject.get_component("Collider")
+        collider.subscribe("collision_enter",self.on_collision_enter)
+        collider.subscribe("collision_exit", self.on_collision_exit)
+        collider.subscribe("pixel_collision_enter", self.on_pixel_collision_enter)
+        collider.subscribe("pixel_collision_exit", self.on_pixel_collision_exit)
+
+    @property
+    def damage(self):
+        return self._damage
+    
+    @damage.setter
+    def damage(self, value):
+        self._damage = value
         
     def start(self):
         pass
@@ -360,5 +385,26 @@ class EnemyLaser(Component):
         
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
+
+    def on_collision_enter(self, other):
+        if other.gameObject.has_component("MotherShip"):
+            mother_ship = self._game_world.current_State.get_mothership()
+            mother_ship.take_damage(self._damage)
+            self._gameObject.destroy()
+
+        if other.gameObject.has_component("MShipPart"):
+            mother_ship = self._game_world.current_State.get_mothership()
+            mother_ship.take_damage(self._damage)
+            self._gameObject.destroy()
+
+
+    def on_collision_exit(self, other):
+        print("collision exit")
+
+    def on_pixel_collision_enter(self, other):
+        print("pixel collision enter")
+
+    def on_pixel_collision_exit(self, other):
+        print("pixel collision exit")
 
     

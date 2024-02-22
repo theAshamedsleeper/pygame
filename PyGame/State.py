@@ -279,12 +279,15 @@ class FirstLevelState(State):
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(Collider())
         go_mothership.add_component(MotherShip())
         go_northship = GameObject(pygame.math.Vector2(0,0))
         go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(Collider())
         go_northship.add_component(MShipPart(0))
         go_southship = GameObject(pygame.math.Vector2(0,0))
         go_southship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_southship.add_component(Collider())
         go_southship.add_component(MShipPart(180))
         go_turret_one = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
         go_turret_two = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
@@ -386,6 +389,12 @@ class FirstLevelState(State):
         gameObject.awake(self._game_world)
         gameObject.start()
         self._gameObjects.append(gameObject)
+
+    def get_mothership(self):
+        for obj in self._gameObjects:
+            if obj.has_component("MotherShip"):
+                ms = obj.get_component("MotherShip")
+                return ms
 
     def awake(self, game_world):
         super().awake(game_world)
@@ -643,12 +652,15 @@ class SecondLevelState(State):
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(Collider())
         go_mothership.add_component(MotherShip())
         go_northship = GameObject(pygame.math.Vector2(0,0))
         go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(Collider())
         go_northship.add_component(MShipPart(0))
         go_southship = GameObject(pygame.math.Vector2(0,0))
         go_southship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_southship.add_component(Collider())
         go_southship.add_component(MShipPart(180))
         go_turret_one = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
         go_turret_two = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
@@ -737,6 +749,11 @@ class SecondLevelState(State):
         gameObject.start()
         self._gameObjects.append(gameObject)
 
+    def get_mothership(self):
+            for obj in self._gameObjects:
+                if obj.has_component("MotherShip"):
+                    ms = obj.get_component("MotherShip")
+                    return ms
     def awake(self, game_world):
         super().awake(game_world)
         self.drawen_start_level = False
@@ -820,8 +837,10 @@ class SecondLevelState(State):
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
+
             self._colliders = [obj for obj in self._colliders if not obj.gameObject._is_destroyed]
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
+
         self._fore_groundV2_go.update(delta_time)  
         self._effect_groundV2_go.update(delta_time)
         
@@ -998,12 +1017,15 @@ class ThirdLevelState(State): #Boss level
 
         go_mothership = GameObject(pygame.math.Vector2(0,0))
         go_mothership.add_component(SpriteRenderer("space_breaker_asset\\Others\\Stations\\station.png"))
+        go_mothership.add_component(Collider())
         go_mothership.add_component(MotherShip())
         go_northship = GameObject(pygame.math.Vector2(0,0))
         go_northship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_northship.add_component(Collider())
         go_northship.add_component(MShipPart(0))
         go_southship = GameObject(pygame.math.Vector2(0,0))
         go_southship.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Big\\body_02.png"))
+        go_southship.add_component(Collider())
         go_southship.add_component(MShipPart(180))
         go_turret_one = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
         go_turret_two = self.makeTurret("space_breaker_asset\\Bonus\\turret_01c_mk3.png")
@@ -1095,6 +1117,12 @@ class ThirdLevelState(State): #Boss level
         gameObject.awake(self._game_world)
         gameObject.start()
         self._gameObjects.append(gameObject)
+
+    def get_mothership(self):
+        for obj in self._gameObjects:
+            if obj.has_component("MotherShip"):
+                ms = obj.get_component("MotherShip")
+                return ms
 
     def awake(self, game_world):
         super().awake(game_world)
@@ -1398,7 +1426,11 @@ class loosOrVicState(State):
                         else:
                             self._player_name += event.unicode               
             
-        
+    def get_mothership(self):
+        for obj in self._gameObjects:
+            if obj.has_component("MotherShip"):
+                ms = obj.get_component("MotherShip")
+                return ms
         
     def awake(self, game_world):
         super().awake(game_world)
