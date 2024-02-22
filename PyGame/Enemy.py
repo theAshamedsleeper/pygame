@@ -12,7 +12,7 @@ class Enemy(Component):
     def __init__(self, scale_factor=0.3) -> None:
         super().__init__()
         self._speed_x = 201
-        self._speed_y = 50
+        self._speed_y = 100
         self._scale_factor = scale_factor
         self._stop_x_position = 1100 #X position where the enemies stop
         self._direction = 1  # Initial direction: 1 for down, -1 for up

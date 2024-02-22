@@ -271,7 +271,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 0.4878 #Sekunder mellem enemies
+        self.enemy_delay = 1.4878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -411,7 +411,7 @@ class FirstLevelState(State):
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
-        self._game_world.score = self._player_score
+        self._game_world.Score = self._player_score
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
 
     def drawing_UI(self):
@@ -499,6 +499,7 @@ class FirstLevelState(State):
                 self.drawen_start_level = True
         
         if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
+            self._game_world.Score = self._player_score
             self._game_world.ChangeToNewState(SecondLevelState(self._game_world))
                 
         self.drawing_UI()
@@ -644,7 +645,7 @@ class SecondLevelState(State):
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
         
-        self.enemy_delay = 4.878 #Sekunder mellem enemies
+        self.enemy_delay = 2.878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -769,7 +770,7 @@ class SecondLevelState(State):
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
-        self._game_world.score = self._player_score
+        self._game_world.Score = self._player_score
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
     
     def drawing_UI(self):
@@ -857,6 +858,7 @@ class SecondLevelState(State):
                 self.drawen_start_level = True
 
         if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
+            self._game_world.Score = self._player_score
             self._game_world.ChangeToNewState(ThirdLevelState(self._game_world))
 
         self.drawing_UI()
@@ -1142,7 +1144,7 @@ class ThirdLevelState(State): #Boss level
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
-        self._game_world.score = self._player_score
+        self._game_world.Score = self._player_score
         self._game_world.ChangeToNewState(loosOrVicState(self._game_world, Win))
 
     def drawing_UI(self):
@@ -1233,7 +1235,7 @@ class ThirdLevelState(State): #Boss level
                 self.drawen_start_level = True
 
         if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
-            self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
+            self.move_to_endscreen(True)
         
         self.drawing_UI()
         self.handle_input()
