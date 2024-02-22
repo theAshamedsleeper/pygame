@@ -37,12 +37,12 @@ class Boss(Component):
         #Move down
         if self.direction == 1:
             self._gameObject.transform.position.y += y_move * delta_time
-            if self._gameObject.transform.position.y >= 600:
+            if self._gameObject.transform.position.y >= 500:
                 self.direction = -1  # Change direction to up
         #Move up
         else:
             self._gameObject.transform.position.y -= y_move * delta_time
-            if self._gameObject.transform.position.y <= 400:
+            if self._gameObject.transform.position.y <= 300:
                 self.direction = 1  # Change direction to down
             
         if self._shoot_timer >= self._shoot_delay:
@@ -52,6 +52,10 @@ class Boss(Component):
             self.spawn_minnions()
             self._spawn_timer = 0 
         
+    def Lose_health(self, damage):
+        self._health -= damage
+        if self._health >= 0:
+            self._gameObject.destroy()
     
     def spawn_minnions(self):
         self._game_world.current_State.spawn_enemy()
@@ -65,8 +69,8 @@ class Boss(Component):
         projectile.add_component(EnemyLaser())
 
 
-        projectile_position = pygame.math.Vector2( self._gameObject.transform.position.x+(self._sprite_size.x-300)-sr.sprite_image.get_width()/2
-                                                 , self._gameObject.transform.position.y-150)
+        projectile_position = pygame.math.Vector2( self._gameObject.transform.position.x+(self._sprite_size.x-200)-sr.sprite_image.get_width()/2
+                                                 , self._gameObject.transform.position.y)
 
         projectile.transform.position = projectile_position
         self._game_world.current_State.instantiate(projectile)
