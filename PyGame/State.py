@@ -678,7 +678,7 @@ class SecondLevelState(State):
         
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
+        go_enemy.add_component(SpriteRenderer("Spaceships\\ship_207.png"))
         go_enemy.add_component(EnemyLvl2())
         go_enemy.add_component(Collider())
 
