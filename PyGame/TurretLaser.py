@@ -117,6 +117,10 @@ class PlamsaExplosion(Component):
     def on_collision_enter(self, other):
         if other.gameObject.has_component("Enemy"):
             other.gameObject.destroy()
+        
+        if other.gameObject.has_component("EnemyLvl2"):
+            other.gameObject.destroy()
+
             
 
     def on_collision_exit(self, other):
