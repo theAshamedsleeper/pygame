@@ -14,7 +14,7 @@ class Player(Component):
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
         self._thruster = None
-        self._thrusterMain = None
+        self._thruster_main = None
         self._movement = pygame.math.Vector2(0,0)
 
     @property
@@ -32,7 +32,7 @@ class Player(Component):
 
     def start(self):
         self._thruster.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
-        self._thrusterMain.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
+        self._thruster_main.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -56,10 +56,10 @@ class Player(Component):
             self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x  
 
             #Main
-            self._thrusterMain.transform.position.y = self._gameObject.transform.position.y -10
-            self._thrusterMain.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
-            animationMain = self._thrusterMain.get_component("Animator")
-            animationMain.play_animation("Mid")      
+            self._thruster_main.transform.position.y = self._gameObject.transform.position.y -10
+            self._thruster_main.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
+            animation_main = self._thruster_main.get_component("Animator")
+            animation_main.play_animation("Mid")      
             
 
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
@@ -70,10 +70,10 @@ class Player(Component):
             self._thruster.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x
 
             #Main
-            self._thrusterMain.transform.position.y = self._gameObject.transform.position.y +10
-            self._thrusterMain.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
-            animationMain = self._thrusterMain.get_component("Animator")
-            animationMain.play_animation("Mid")
+            self._thruster_main.transform.position.y = self._gameObject.transform.position.y +10
+            self._thruster_main.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
+            animation_main = self._thruster_main.get_component("Animator")
+            animation_main.play_animation("Mid")
 
 
         else:
@@ -85,10 +85,10 @@ class Player(Component):
 
 
             #Main
-            self._thrusterMain.transform.position.y = self._gameObject.transform.position.y
-            self._thrusterMain.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x
-            animationMain = self._thrusterMain.get_component("Animator")
-            animationMain.play_animation("Mid")
+            self._thruster_main.transform.position.y = self._gameObject.transform.position.y
+            self._thruster_main.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 34 #player spawn location x
+            animation_main = self._thruster_main.get_component("Animator")
+            animation_main.play_animation("Mid")
 
         
         
@@ -114,6 +114,7 @@ class Player(Component):
         projectile.add_component(Collider())
         
         projectile.add_component(Laser())
+        
 
         projectile_position = pygame.math.Vector2(self._gameObject.transform.position.x+(self._sprite_size.x-10)-sr.sprite_image.get_width()/2
                                                  ,self._gameObject.transform.position.y)
@@ -125,7 +126,7 @@ class Player(Component):
 
     def add_thruster(self, go, go2):
         self._thruster = go
-        self._thrusterMain = go2
+        self._thruster_main = go2
 
 class Thruster(Component):
     def __init__(self) -> None:
