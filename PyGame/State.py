@@ -320,10 +320,19 @@ class FirstLevelState(State):
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",)
         thrust_main_anim.play_animation("Mid")
 
+        go_thruster_mother = GameObject(pygame.math.Vector2(0,0))
+        go_thruster_mother.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png"))
+        go_thruster_mother.add_component(Thruster())
+        thrust_mother_anim = go_thruster_mother.add_component(Animator())
+        thrust_mother_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04c.png",)
+        thrust_mother_anim.play_animation("Mid")
+
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
-        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main)
+        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main, go_thruster_mother)
         
 
         
@@ -331,6 +340,7 @@ class FirstLevelState(State):
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_thruster)
         self._gameObjects.append(go_thruster_main)
+        self._gameObjects.append(go_thruster_mother)
         self._gameObjects.append(go_player)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
@@ -646,10 +656,20 @@ class SecondLevelState(State):
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",)
         thrust_main_anim.play_animation("Mid")
 
+        go_thruster_mother = GameObject(pygame.math.Vector2(0,0))
+        go_thruster_mother.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png"))
+        go_thruster_mother.add_component(Thruster())
+        thrust_mother_anim = go_thruster_mother.add_component(Animator())
+        thrust_mother_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04c.png",)
+        thrust_mother_anim.play_animation("Mid")
+
+
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("player_ship.png"))
         go_player.add_component(Player())
-        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main)
+        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main, go_thruster_mother)
         
         
         
@@ -658,6 +678,7 @@ class SecondLevelState(State):
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_thruster)
         self._gameObjects.append(go_thruster_main)
+        self._gameObjects.append(go_thruster_mother)
         self._gameObjects.append(go_player)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
@@ -977,17 +998,25 @@ class ThirdLevelState(State): #Boss level
                                   "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01c.png",)
         thrust_main_anim.play_animation("Mid")
 
+        go_thruster_mother = GameObject(pygame.math.Vector2(0,0))
+        go_thruster_mother.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png"))
+        go_thruster_mother.add_component(Thruster())
+        thrust_mother_anim = go_thruster_mother.add_component(Animator())
+        thrust_mother_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04c.png",)
+        thrust_mother_anim.play_animation("Mid")
+
         go_player = GameObject(pygame.math.Vector2(0,0))
         go_player.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\body_01.png"))
         go_player.add_component(Player())
-        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main)
-        
-        
+        go_player.get_component("Player").add_thruster(go_thruster, go_thruster_main, go_thruster_mother)
         
         self._gameObjects.append(go_southship)
         self._gameObjects.append(go_northship)
         self._gameObjects.append(go_thruster)
         self._gameObjects.append(go_thruster_main)
+        self._gameObjects.append(go_thruster_mother)
         self._gameObjects.append(go_player)
         self._gameObjects.append(go_mothership)
         self._gameObjects.append(go_turret_one)
