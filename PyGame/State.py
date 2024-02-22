@@ -324,9 +324,9 @@ class FirstLevelState(State):
         go_thruster_mother.add_component(SpriteRenderer("space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_01a.png"))
         go_thruster_mother.add_component(Thruster())
         thrust_mother_anim = go_thruster_mother.add_component(Animator())
-        thrust_mother_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_03a.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_03b.png",
-                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_03d.png",)
+        thrust_mother_anim.add_animation("Mid", -90, "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04a.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04b.png",
+                                  "space_breaker_asset\\Ships\\Small\\Exhaust\\exhaust_04c.png",)
         thrust_mother_anim.play_animation("Mid")
 
         go_player = GameObject(pygame.math.Vector2(0,0))
