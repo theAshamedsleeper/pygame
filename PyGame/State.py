@@ -341,7 +341,7 @@ class FirstLevelState(State):
         self.instantiate(go_enemy)
 
     def spawn_boss(self):  
-        go_boss = GameObject(pygame.math.Vector2(1350,510))
+        go_boss = GameObject(pygame.math.Vector2(1240,510))
         go_boss.add_component(SpriteRenderer("Spaceships\\ship_41.png"))
         go_boss.add_component(Boss())
         self.instantiate(go_boss)
@@ -442,7 +442,7 @@ class FirstLevelState(State):
         # self._effect_ground_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay:
-            self.spawn_enemy()
+            #self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
         self.drawing_UI()
@@ -523,7 +523,7 @@ class FirstLevelState(State):
                     self._game_world.SFX_volume -= 10     
                     if self._game_world.SFX_volume < 0:
                         self._game_world.SFX_volume = 0     
-                self._music= mixer.music.set_volume(self._game_world.SFX_Volume/1000)
+                self._music= mixer.music.set_volume(self._game_world.SFX_volume/1000)
             case 2:#Grapchis options
                 self._graphics_opt = self.tmp
         #Resets the pos to 1
