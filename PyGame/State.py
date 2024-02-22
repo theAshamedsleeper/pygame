@@ -337,7 +337,6 @@ class FirstLevelState(State):
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
-
         
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
@@ -350,12 +349,6 @@ class FirstLevelState(State):
         go_enemy.add_component(Collider())
 
         self.instantiate(go_enemy)
-
-    def spawn_boss(self):  
-        go_boss = GameObject(pygame.math.Vector2(1240,510))
-        go_boss.add_component(SpriteRenderer("Spaceships\\ship_41.png"))
-        go_boss.add_component(Boss())
-        self.instantiate(go_boss)
 
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
@@ -370,10 +363,10 @@ class FirstLevelState(State):
             gameObject.awake(self._game_world)        
 
     def start(self):
+        self.drawen_start_level = False
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gameObject in self._gameObjects[:]:
             gameObject.start()
-        self.spawn_boss()
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
@@ -425,11 +418,10 @@ class FirstLevelState(State):
                     self.draw_text("Graphics", self._text_font_sel, (255, 255, 255), 500, 460)    
                     self.draw_text(f"{self._game_world.Graphics[self._graphics_opt]}", self._text_font_sel, (255, 255, 255), 750, 460)
 
-
     def update(self, delta_time):
         #Game not paused
         self.enemy_timer +=delta_time
-
+        
 
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
@@ -457,6 +449,12 @@ class FirstLevelState(State):
             #self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
+        if self.drawen_start_level == False:
+            if self.enemy_timer <= 2:
+                self.draw_text("First level started",self._text_font,(255, 255, 255), 750, 450)
+            if self.enemy_timer >= 2:
+                self.drawen_start_level = True
+                
         self.drawing_UI()
         self.handle_input()
         
@@ -473,7 +471,9 @@ class FirstLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self.move_to_endscreen(True)
+                    self._game_world.score = self._player_score
+                    self._game_world.ChangeToNewState(SecondLevelState(self._game_world))
+    
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
                         if self._options_sele == False:
@@ -488,11 +488,9 @@ class FirstLevelState(State):
                         if event.key == pygame.K_LEFT:
                             #self._menu_sound.play()
                             self.do_options_input(-1)
-                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                         elif event.key == pygame.K_RIGHT:
                             #self._menu_sound.play()
                             self.do_options_input(1)
-                            #self._menu_sound.set_volume(self._game_world.SFX_volume/1000)
                 self._menu_sele = max(0, min(2, self._menu_sele))
                 
     def do_menu_input(self):
@@ -687,6 +685,7 @@ class SecondLevelState(State):
 
     def awake(self, game_world):
         super().awake(game_world)
+        self.drawen_start_level = False
         self._music = mixer.music.play(-1)
         self._music= mixer.music.set_volume(self._game_world.music_volume/1000)        
         for gameObject in self._gameObjects[:]:
@@ -775,7 +774,11 @@ class SecondLevelState(State):
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
-
+        if self.drawen_start_level == False:
+            if self.enemy_timer <= 2:
+                self.draw_text("Second level started",self._text_font,(255, 255, 255), 750, 450)
+            if self.enemy_timer >= 2:
+                self.drawen_start_level = True
         
         self.drawing_UI()
         self.handle_input()
@@ -793,7 +796,8 @@ class SecondLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self.move_to_endscreen(True)
+                    self._game_world.score = self._player_score
+                    self._game_world.ChangeToNewState(ThirdLevelState(self._game_world))
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
                         if self._options_sele == False:
@@ -892,6 +896,8 @@ class ThirdLevelState(State): #Boss level
         self._graphics_opt = 1      
         #So its reset from the start
         self._game_world.STT_ammo = "||||"
+        
+        self.should_boss_spawn = True
         
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
@@ -1000,6 +1006,12 @@ class ThirdLevelState(State): #Boss level
         go_enemy.add_component(Collider())
         self.instantiate(go_enemy)
 
+    def spawn_boss(self):  
+        go_boss = GameObject(pygame.math.Vector2(1150,400))
+        go_boss.add_component(SpriteRenderer("Spaceships\\ship_41.png"))
+        go_boss.add_component(Boss())
+        go_boss.add_component(Collider())
+        self.instantiate(go_boss)
 
 
     def instantiate(self, gameObject):
@@ -1009,6 +1021,7 @@ class ThirdLevelState(State): #Boss level
 
     def awake(self, game_world):
         super().awake(game_world)
+        self.drawen_start_level = False
         self._music = mixer.music.play(-1)
         self._music= mixer.music.set_volume(self._game_world.music_volume/1000)
         for gameObject in self._gameObjects[:]:
@@ -1095,6 +1108,16 @@ class ThirdLevelState(State): #Boss level
         if self.enemy_timer >= self.enemy_delay:
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
+        
+        if self.should_boss_spawn == True:
+            self.spawn_boss()
+            self.should_boss_spawn = False
+        
+        if self.drawen_start_level == False:
+            if self.enemy_timer <= 2:
+                self.draw_text("Final level started",self._text_font,(255, 255, 255), 750, 450)
+            if self.enemy_timer >= 2:
+                self.drawen_start_level = True
         
         self.drawing_UI()
         self.handle_input()
