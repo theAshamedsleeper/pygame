@@ -1348,7 +1348,7 @@ class loosOrVicState(State):
             self._background_go = GameObject(position=(0, 0))
             self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
         else:
-            self._background_image_path ="LostGame.png"
+            self._background_image_path ="DeathScreen.png"
             self._background_go = GameObject(position=(0, 0))
             self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
 
