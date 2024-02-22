@@ -13,7 +13,7 @@ class Boss(Component):
         super().__init__()
         self.shoot_sound = mixer.Sound("Assets\\Audio\\scificannon.mp3")
         self.scale_factor = scale_factor
-        self._health = 10
+        self._health = 60
         self._shoot_delay = 4.878
         self._shoot_timer = 0
         self._spawn_timer = 0
@@ -26,6 +26,11 @@ class Boss(Component):
         sr.scale(self.scale_factor)
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
+        collider = self._gameObject.get_component("Collider")
+        collider.subscribe("collision_enter",self.on_collision_enter)
+        collider.subscribe("collision_exit", self.on_collision_exit)
+        collider.subscribe("pixel_collision_enter", self.on_pixel_collision_enter)
+        collider.subscribe("pixel_collision_exit", self.on_pixel_collision_exit)
 
     def start(self):
         pass
@@ -53,10 +58,12 @@ class Boss(Component):
             self.spawn_minnions()
             self._spawn_timer = 0 
         
-    def Lose_health(self, damage):
+    def lose_health(self, damage):
         self._health -= damage
-        if self._health >= 0:
+        if self._health <= 0:
             self._gameObject.destroy()
+            self._game_world.current_State.give_score(100)
+            self._game_world.current_State.move_to_endscreen(True)
     
     def spawn_minnions(self):
         self._game_world.current_State.spawn_enemy()
@@ -78,3 +85,19 @@ class Boss(Component):
         projectile.transform.position = projectile_position
         self._game_world.current_State.instantiate(projectile)
         
+    def on_collision_enter(self, other):
+        if other.gameObject.has_component("TurretLaser"):   
+            self.lose_health(15)
+                       
+
+            
+
+    def on_collision_exit(self, other):
+        print("collision exit")
+
+    def on_pixel_collision_enter(self, other):
+        print("pixel collision enter")
+
+    def on_pixel_collision_exit(self, other):
+        print("pixel collision exit")
+

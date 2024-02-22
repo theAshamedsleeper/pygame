@@ -268,6 +268,11 @@ class Laser(Component):
             enemy = other.gameObject.get_component("EnemyLvl2")
             enemy.health -= self._damage
             self._gameObject.destroy()
+            
+        if other.gameObject.has_component("Boss"):
+            enemy = other.gameObject.get_component("Boss")
+            enemy.lose_health(self._damage)
+            self._gameObject.destroy()
 
 
     def on_pixel_collision_exit(self, other):
