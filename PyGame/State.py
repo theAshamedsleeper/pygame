@@ -376,7 +376,7 @@ class FirstLevelState(State):
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
-        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
+        #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
         self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
@@ -562,7 +562,7 @@ class SecondLevelState(State):
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
 
-        self._player_score = 0
+        self._player_score = self._game_world.score
         self._menu_sele = 0
         self._options_sele = False  
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
@@ -704,7 +704,7 @@ class SecondLevelState(State):
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
-        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
+        #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
         self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
@@ -889,7 +889,7 @@ class ThirdLevelState(State): #Boss level
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
 
-        self._player_score = 0
+        self._player_score = self._game_world.score
         self._menu_sele = 0
         self._options_sele = False  
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
@@ -1040,7 +1040,7 @@ class ThirdLevelState(State): #Boss level
     def drawing_UI(self):
         self.draw_text(f"Ammo: {self._game_world.STT_ammo}",self._text_font,(255, 255, 255), 50, 25)
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
-        self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
+        #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
         self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
@@ -1135,6 +1135,7 @@ class ThirdLevelState(State): #Boss level
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
+                    self._game_world.score = self._player_score
                     self.move_to_endscreen(True)
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
