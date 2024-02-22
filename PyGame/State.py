@@ -419,7 +419,7 @@ class FirstLevelState(State):
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -517,7 +517,7 @@ class FirstLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self._game_world.ChangeToNewState(SecondLevelState(self._game_world))
     
                 if self._game_world.worldPause == True:
@@ -777,7 +777,7 @@ class SecondLevelState(State):
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -875,7 +875,7 @@ class SecondLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self._game_world.ChangeToNewState(ThirdLevelState(self._game_world))
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
@@ -1147,7 +1147,7 @@ class ThirdLevelState(State): #Boss level
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -1244,7 +1244,7 @@ class ThirdLevelState(State): #Boss level
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self.move_to_endscreen(True)
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
