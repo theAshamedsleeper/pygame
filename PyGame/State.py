@@ -271,7 +271,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 0.5 #Sekunder mellem enemies
+        self.enemy_delay = 2 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
