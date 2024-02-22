@@ -38,7 +38,7 @@ class Enemy(Component):
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = (self._screen_size.x) + (self._sprite_size.x)  #enemy spawn location x
-        self._gameObject.transform.position.y = random.randint(180, int(self._screen_size.y)) + (self._sprite_size.y) #enemy spawn location y
+        self._gameObject.transform.position.y = random.randint(0, int(self._screen_size.y)) + (self._sprite_size.y) #enemy spawn location y
 
     def start(self):
         pass
