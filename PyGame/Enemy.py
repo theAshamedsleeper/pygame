@@ -18,6 +18,15 @@ class Enemy(Component):
         self.shoot_delay = 4.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
+        self._health = 3
+
+    @property
+    def health(self):
+        return self._health
+    
+    @health.setter
+    def health(self, value):
+        self._health = value
     
     def awake(self, game_world):
         self._game_world = game_world
@@ -62,6 +71,9 @@ class Enemy(Component):
                 if self.stop_x_position >800:
                     self.stop_x_position-=100
                 self.speed_x = 200
+
+        if self._health <= 0:
+            self._gameObject.destroy()
 
     def shoot(self):
         self.shoot_sound.play()

@@ -82,6 +82,7 @@ class Player(Component):
         projectile.add_component(Collider())
         
         projectile.add_component(Laser())
+        
 
         projectile_position = pygame.math.Vector2(self._gameObject.transform.position.x+(self._sprite_size.x-10)-sr.sprite_image.get_width()/2
                                                  ,self._gameObject.transform.position.y)
