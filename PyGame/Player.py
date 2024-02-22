@@ -15,6 +15,7 @@ class Player(Component):
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
         self._thruster = None
         self._thruster_main = None
+        self._thruster_mother = None
         self._movement = pygame.math.Vector2(0,0)
 
     @property
@@ -29,10 +30,14 @@ class Player(Component):
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
         self._gameObject.transform.position.x = (self._screen_size.x/4) - (self._sprite_size.x/2) #player spawn location x
         self._gameObject.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2) #player spawn location y
+        
 
     def start(self):
         self._thruster.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
-        self._thruster_main.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2)
+        self._thruster_main.transform.position.y = (self._screen_size.y/2) - (self._sprite_size.y/2) 
+        self._thruster_mother.transform.position.y = ((self._screen_size.y/2)- (self._sprite_size.y/2)) - 32
+        self._thruster_mother.transform.position.x = 20
+
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -42,11 +47,12 @@ class Player(Component):
         
         self.shoot_timer +=delta_time
 
-        #MainThruster
-        #animationMain = self._thrusterMain.get_component("Animator")
-        #animationMain.play_animation("Mid")
-        #self._thrusterMain.transform.position.y = self._gameObject.transform.position.y +10 
+        #Mother
+        
+        animation_mother = self._thruster_mother.get_component("Animator")
+        animation_mother.play_animation("Mid")
 
+        
 
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             self._movement.y -= speed
@@ -59,7 +65,7 @@ class Player(Component):
             self._thruster_main.transform.position.y = self._gameObject.transform.position.y -10
             self._thruster_main.transform.position.x = ((self._screen_size.x/4) - (self._sprite_size.x/2)) - 30 #player spawn location x
             animation_main = self._thruster_main.get_component("Animator")
-            animation_main.play_animation("Mid")      
+            animation_main.play_animation("Mid")
             
 
         elif keys[pygame.K_s] or keys[pygame.K_DOWN]:
@@ -123,17 +129,16 @@ class Player(Component):
 
         self._game_world.current_State.instantiate(projectile)
 
-    def add_thruster(self, go, go2):
+    def add_thruster(self, go, go2, go3):
         self._thruster = go
         self._thruster_main = go2
+        self._thruster_mother = go3
 
 class Thruster(Component):
     def __init__(self) -> None:
         super().__init__()
         self._ship_movement = pygame.math.Vector2(0,0)
         self._rotation = -90
-
-
 
     @property
     def ship_movement(self):
