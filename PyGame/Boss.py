@@ -14,7 +14,7 @@ class Boss(Component):
         self.shoot_sound = mixer.Sound("Assets\\Audio\\scificannon.mp3")
         self.scale_factor = scale_factor
         self._health = 10
-        self._shoot_delay = 4
+        self._shoot_delay = 4.77
         self._shoot_timer = 0
         self._spawn_timer = 0
         self._spawn_delay =4
