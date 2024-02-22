@@ -344,8 +344,27 @@ class Collider():
             self._listeners["pixel_collision_exit"](other)
          
 class EnemyLaser(Component):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._damage = 2
+        
     def awake(self, game_world):
+        self._game_world = game_world
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
+        collider = self._gameObject.get_component("Collider")
+        collider.subscribe("collision_enter",self.on_collision_enter)
+        collider.subscribe("collision_exit", self.on_collision_exit)
+        collider.subscribe("pixel_collision_enter", self.on_pixel_collision_enter)
+        collider.subscribe("pixel_collision_exit", self.on_pixel_collision_exit)
+
+    @property
+    def damage(self):
+        return self._damage
+    
+    @damage.setter
+    def damage(self, value):
+        self._damage = value
         
     def start(self):
         pass
@@ -357,5 +376,26 @@ class EnemyLaser(Component):
         
         if self._gameObject.transform.position.x > self._screen_size.x:
             self._gameObject.destroy()
+
+    def on_collision_enter(self, other):
+        if other.gameObject.has_component("MotherShip"):
+            mother_ship = self._game_world.current_State.get_mothership()
+            mother_ship.take_damage(self._damage)
+            self._gameObject.destroy()
+
+        if other.gameObject.has_component("MShipPart"):
+            mother_ship = self._game_world.current_State.get_mothership()
+            mother_ship.take_damage(self._damage)
+            self._gameObject.destroy()
+
+
+    def on_collision_exit(self, other):
+        print("collision exit")
+
+    def on_pixel_collision_enter(self, other):
+        print("pixel collision enter")
+
+    def on_pixel_collision_exit(self, other):
+        print("pixel collision exit")
 
     

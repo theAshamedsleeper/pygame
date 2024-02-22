@@ -3,6 +3,7 @@ from Components import SpriteRenderer
 from Components import Animator
 from GameObject import GameObject
 from Components import EnemyLaser
+from Components import Collider
 import pygame
 import math
 from pygame import mixer
@@ -60,9 +61,11 @@ class Boss(Component):
         self.shoot_sound.play()
         projectile = GameObject(None)
         sr = projectile.add_component(SpriteRenderer("EnemyLaser.png"))
+        projectile.add_component(Collider())
         scale_factor = 7  # You can adjust this value as needed
         sr.scale(scale_factor)
-        projectile.add_component(EnemyLaser())
+        el = projectile.add_component(EnemyLaser())
+        el.damage = 10
 
 
         projectile_position = pygame.math.Vector2( self._gameObject.transform.position.x+(self._sprite_size.x-300)-sr.sprite_image.get_width()/2
