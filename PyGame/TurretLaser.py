@@ -3,6 +3,7 @@ from Components import Component
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
+from Components import Collider
 from pygame import mixer
 
 class TurretLaser(Component):
@@ -77,6 +78,7 @@ class TurretLaser(Component):
 
         new_object.add_component(PlamsaExplosion(position, sound))
         new_object.add_component(SpriteRenderer(f"{sprite_path}Effect_TheVortex_1_000.png"))
+        new_object.add_component(Collider())
         animator = new_object.add_component(Animator())
         
 
@@ -97,6 +99,11 @@ class PlamsaExplosion(Component):
         self._gameObject.transform.position = self._position_to_set
         self._game_world = game_world
         self._sound.set_volume(self._game_world.SFX_volume/200)
+        collider = self._gameObject.get_component("Collider")
+        collider.subscribe("collision_enter",self.on_collision_enter)
+        collider.subscribe("collision_exit", self.on_collision_exit)
+        collider.subscribe("pixel_collision_enter", self.on_pixel_collision_enter)
+        collider.subscribe("pixel_collision_exit", self.on_pixel_collision_exit)
     
     def start(self):
         self._animator = self._gameObject.get_component("Animator")
@@ -106,3 +113,17 @@ class PlamsaExplosion(Component):
     def update(self, delta_time):
         if self._animator.is_on_final_frame():
             self._gameObject.destroy()
+
+    def on_collision_enter(self, other):
+        if other.gameObject.has_component("Enemy"):
+            other.gameObject.destroy()
+            
+
+    def on_collision_exit(self, other):
+        print("collision exit")
+
+    def on_pixel_collision_enter(self, other):
+        print("pixel collision enter")
+
+    def on_pixel_collision_exit(self, other):
+        print("pixel collision exit")

@@ -6,6 +6,7 @@ from Player import Thruster
 from MotherShip import MotherShip
 from MotherShip import MShipPart
 from MotherShip import Turret
+from Boss import Boss
 from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Animator
@@ -354,11 +355,17 @@ class FirstLevelState(State):
 
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
         go_enemy.add_component(Enemy())
         go_enemy.add_component(Collider())
 
         self.instantiate(go_enemy)
+
+    def spawn_boss(self):  
+        go_boss = GameObject(pygame.math.Vector2(1240,510))
+        go_boss.add_component(SpriteRenderer("Spaceships\\ship_41.png"))
+        go_boss.add_component(Boss())
+        self.instantiate(go_boss)
 
     def instantiate(self, gameObject):
         gameObject.awake(self._game_world)
@@ -376,6 +383,7 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gameObject in self._gameObjects[:]:
             gameObject.start()
+        self.spawn_boss()
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
@@ -449,13 +457,14 @@ class FirstLevelState(State):
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
+            self._colliders = [obj for obj in self._colliders if not obj.gameObject._is_destroyed]
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
             
         
-        self._effect_ground_go.update(delta_time)
+        # self._effect_ground_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay:
-            self.spawn_enemy()
+            #self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
         self.drawing_UI()
@@ -536,7 +545,7 @@ class FirstLevelState(State):
                     self._game_world.SFX_volume -= 10     
                     if self._game_world.SFX_volume < 0:
                         self._game_world.SFX_volume = 0     
-                self._music= mixer.music.set_volume(self._game_world.SFX_Volume/1000)
+                self._music= mixer.music.set_volume(self._game_world.SFX_volume/1000)
             case 2:#Grapchis options
                 self._graphics_opt = self.tmp
         #Resets the pos to 1
@@ -685,7 +694,7 @@ class SecondLevelState(State):
         
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
+        go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
         go_enemy.add_component(Enemy())
         go_enemy.add_component(Collider())
 
@@ -1009,9 +1018,9 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
-        def draw_text(self,text, font, text_col, x, y):
-            img = font.render(text, True, text_col)
-            self._game_world.screen.blit(img,(x,y))
+    def draw_text(self,text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self._game_world.screen.blit(img,(x,y))
     
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))

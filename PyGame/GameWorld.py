@@ -17,7 +17,7 @@ class GameWorld:
         self._clock.tick(60)
         self._nextState = None
         self._newState = None
-        self._music_vol = 100
+        self._music_vol = 50
         self._SFX_vol = 100
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]

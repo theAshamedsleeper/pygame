@@ -18,6 +18,15 @@ class Enemy(Component):
         self.shoot_delay = 4.15
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
+        self._health = 3
+
+    @property
+    def health(self):
+        return self._health
+    
+    @health.setter
+    def health(self, value):
+        self._health = value
     
     def awake(self, game_world):
         self._game_world = game_world
@@ -31,7 +40,8 @@ class Enemy(Component):
 
         min_y = 80  # Minimum y-coordinate for enemy spawn
         max_y = max(min_y, self._screen_size.y)  # Ensure max_y is at least min_y
-        self._gameObject.transform.position.y = random.randint(180, int(self._screen_size.y)) + (self._sprite_size.y) #enemy spawn location y
+        #enemy spawn location y
+        self._gameObject.transform.position.y = random.randint(180, int(self._screen_size.y)) + (self._sprite_size.y)
 
     def start(self):
         pass
@@ -62,6 +72,9 @@ class Enemy(Component):
                 if self.stop_x_position >800:
                     self.stop_x_position-=100
                 self.speed_x = 200
+
+        if self._health <= 0:
+            self._gameObject.destroy()
 
     def shoot(self):
         self.shoot_sound.play()
