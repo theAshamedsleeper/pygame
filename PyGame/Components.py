@@ -118,7 +118,7 @@ class SpriteRenderer(Component):
         self._sprite.rect.center = self.gameObject.transform.position
         self._game_world.screen.blit(self._sprite_image, self._sprite.rect)
 
-        pygame.draw.rect(self._game_world.screen, (255, 0, 0), self._sprite.rect, 1)
+       # pygame.draw.rect(self._game_world.screen, (255, 0, 0), self._sprite.rect, 1)
 
     def scale(self, scale_factor):
         if scale_factor <=0:

@@ -230,14 +230,13 @@ class MenuState(State):
 
 class FirstLevelState(State):
 
+
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
         self._enemy_amount = []
         self._enemy_max = 20 #max amount of enemies that spawn in this level
         self._enemy_counter = 0
-
-       
 
         self._player_score = 0
         self._menu_sele = 0
@@ -272,7 +271,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 0.5 #Sekunder mellem enemies
+        self.enemy_delay = 0.4878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -358,6 +357,14 @@ class FirstLevelState(State):
     def enemy_amount(self):
         return self._enemy_amount
     
+    @property
+    def spawned_enemies(self):
+        return self._enemy_counter
+    
+    @spawned_enemies.setter
+    def spawned_enemies(self, value):
+        self.spawned_enemies = value
+    
     @enemy_amount.setter
     def enemy_amount(self, value):
         self._enemy_amount = value
@@ -412,7 +419,7 @@ class FirstLevelState(State):
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -479,7 +486,8 @@ class FirstLevelState(State):
         # self._effect_ground_go.update(delta_time)
         
         if self.enemy_timer >= self.enemy_delay and self._enemy_counter <=self._enemy_max:
-            self._enemy_counter+1
+            self._enemy_counter += 1
+            print(self._enemy_counter)
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
             
@@ -489,6 +497,9 @@ class FirstLevelState(State):
                 self.draw_text("First level started",self._text_font,(255, 255, 255), 750, 450)
             if self.enemy_timer >= 2:
                 self.drawen_start_level = True
+        
+        if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
+            self._game_world.ChangeToNewState(SecondLevelState(self._game_world))
                 
         self.drawing_UI()
         self.handle_input()
@@ -506,7 +517,7 @@ class FirstLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self._game_world.ChangeToNewState(SecondLevelState(self._game_world))
     
                 if self._game_world.worldPause == True:
@@ -596,8 +607,9 @@ class SecondLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
-        self.enemy_amount = []
-        self.enemy_max = 30 #max amount of enemies that spawn in this level
+        self._enemy_amount = []
+        self._enemy_max = 20 #max amount of enemies that spawn in this level
+        self._enemy_counter = 0
 
         self._player_score = self._game_world.Score
         self._menu_sele = 0
@@ -632,7 +644,7 @@ class SecondLevelState(State):
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
         
-        self.enemy_delay = 5 #Sekunder mellem enemies
+        self.enemy_delay = 4.878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -728,7 +740,7 @@ class SecondLevelState(State):
         go_enemy.add_component(SpriteRenderer("Spaceships\\ship_207.png"))
         go_enemy.add_component(EnemyLvl2())
         go_enemy.add_component(Collider())
-
+        self._enemy_amount.append(go_enemy)
         self.instantiate(go_enemy)
 
 
@@ -765,7 +777,7 @@ class SecondLevelState(State):
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -832,7 +844,9 @@ class SecondLevelState(State):
         self._fore_groundV2_go.update(delta_time)  
         self._effect_groundV2_go.update(delta_time)
         
-        if self.enemy_timer >= self.enemy_delay and len(self.enemy_amount) <=self.enemy_max:
+        if self.enemy_timer >= self.enemy_delay and self._enemy_counter <=self._enemy_max:
+            self._enemy_counter += 1
+            print(self._enemy_counter)
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
 
@@ -841,7 +855,10 @@ class SecondLevelState(State):
                 self.draw_text("Second level started",self._text_font,(255, 255, 255), 750, 450)
             if self.enemy_timer >= 2:
                 self.drawen_start_level = True
-        
+
+        if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
+            self._game_world.ChangeToNewState(ThirdLevelState(self._game_world))
+
         self.drawing_UI()
         self.handle_input()
 
@@ -858,7 +875,7 @@ class SecondLevelState(State):
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self._game_world.ChangeToNewState(ThirdLevelState(self._game_world))
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
@@ -950,9 +967,12 @@ class ThirdLevelState(State): #Boss level
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
+        self._enemy_amount = []
+        self._enemy_max = 5 #max amount of enemies that spawn in this level
+        self._enemy_counter = 0
         
 
-        self._player_score = self._game_world.score
+        self._player_score = self._game_world.Score
         self._menu_sele = 0
         self._options_sele = False  
         self._opt_menu_sel = 1 #0 for down, 1 for mid, 2 for up
@@ -960,7 +980,7 @@ class ThirdLevelState(State): #Boss level
         #So its reset from the start
         self._game_world.STT_ammo = "||||"
         
-        self.should_boss_spawn = True
+        self.should_boss_spawn = False
         
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
@@ -988,8 +1008,8 @@ class ThirdLevelState(State): #Boss level
         self._effect_groundv3_go = GameObject(position=(0, 0))
         self._effect_groundv3_go.add_component(Background(game_world, image_path=self._effect_groundv3_image_path, scroll_speed=self._effect_groundv3_scroll_speed))
         
-        self.enemy_delay = 3 #Sekunder mellem enemies
-        self.enemy_timer = 0    
+        self.enemy_delay = 1.9512 #Sekunder mellem enemies
+        self._enemy_timer = 0    
 
         # background_music = mixer
         mixer.music.load("Assets\\Audio\\Background.mp3")
@@ -1068,6 +1088,9 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
+        
+        self._before_boss_spawn = 0
+        
 
     def give_score(self, value):
         self._player_score+=value
@@ -1078,10 +1101,12 @@ class ThirdLevelState(State): #Boss level
     
     def spawn_enemy(self):
         go_enemy = GameObject(pygame.math.Vector2(0,0))
-        go_enemy.add_component(SpriteRenderer("ship_1782.png"))
-        go_enemy.add_component(Enemy())
+        go_enemy.add_component(SpriteRenderer("Spaceships\\ship_207.png"))
+        go_enemy.add_component(EnemyLvl2())
         go_enemy.add_component(Collider())
+        self._enemy_amount.append(go_enemy)
         self.instantiate(go_enemy)
+
 
     def spawn_boss(self):  
         go_boss = GameObject(pygame.math.Vector2(1150,400))
@@ -1125,7 +1150,7 @@ class ThirdLevelState(State): #Boss level
         self.draw_text(f"Score: {self._player_score}",self._text_font,(255, 255, 255), 500, 25)
         #self.draw_text(f"Lives",self._text_font,(255, 255, 255), 950, 25)
         
-        self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
+        #self.draw_text(f"{self._menu_sele}", self._text_font_sel,(255, 255, 255), 400, 100)
         
         if self._game_world.worldPause == True and self._options_sele == False:
             match self._menu_sele:
@@ -1167,7 +1192,7 @@ class ThirdLevelState(State): #Boss level
 
     def update(self, delta_time):
         
-        self.enemy_timer +=delta_time
+        self._enemy_timer +=delta_time
         
         self._backgroundv3_go.update(delta_time)
         self._middle_groundV3_go.update(delta_time)
@@ -1189,19 +1214,26 @@ class ThirdLevelState(State): #Boss level
         self._fore_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
 
-        if self.enemy_timer >= self.enemy_delay:
-            self.spawn_enemy()
-            self.enemy_timer = 0 #resets cooldown after shoot()
+        if self._before_boss_spawn <= 10:
+            if self._enemy_timer >= self.enemy_delay:
+                self.spawn_enemy()
+                if  self._before_boss_spawn == 10:
+                    self.should_boss_spawn = True
+                self._before_boss_spawn += 1
+                self._enemy_timer = 0 #resets cooldown after shoot()
         
         if self.should_boss_spawn == True:
             self.spawn_boss()
             self.should_boss_spawn = False
         
         if self.drawen_start_level == False:
-            if self.enemy_timer <= 2:
+            if self._enemy_timer <= 2:
                 self.draw_text("Final level started",self._text_font,(255, 255, 255), 750, 450)
-            if self.enemy_timer >= 2:
+            if self._enemy_timer >= 2:
                 self.drawen_start_level = True
+
+        if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
+            self._game_world.ChangeToNewState(loosOrVicState(self._game_world))
         
         self.drawing_UI()
         self.handle_input()
@@ -1219,7 +1251,7 @@ class ThirdLevelState(State): #Boss level
                     self._game_world.worldPause = False
                     self._options_sele = False
                 elif event.key == pygame.K_COMMA:
-                    self._game_world.score = self._player_score
+                    self._game_world.Score = self._player_score
                     self.move_to_endscreen(True)
                 if self._game_world.worldPause == True:
                     if event.key == pygame.K_SPACE: 
@@ -1316,7 +1348,7 @@ class loosOrVicState(State):
             self._background_go = GameObject(position=(0, 0))
             self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
         else:
-            self._background_image_path ="LostGame.png"
+            self._background_image_path ="DeathScreen.png"
             self._background_go = GameObject(position=(0, 0))
             self._background_go.add_component(MenuBackground(game_world, image_path=self._background_image_path))
 

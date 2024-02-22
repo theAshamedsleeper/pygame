@@ -10,7 +10,7 @@ from Components import Collider
 class Player(Component):
 
     def __init__(self):
-        self.shoot_delay = 0.5
+        self.shoot_delay = 0.4878
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
         self._thruster = None
@@ -24,7 +24,7 @@ class Player(Component):
         
     def awake(self, game_world):
         self._game_world = game_world
-        self.shoot_sound.set_volume(self._game_world.SFX_volume/1000)
+        self.shoot_sound.set_volume(self._game_world.SFX_volume/1200)
         sr = self._gameObject.get_component("SpriteRenderer")
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())

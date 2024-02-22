@@ -16,9 +16,9 @@ class EnemyLvl2(Component):
         self._scale_factor = scale_factor
         self._stop_x_position = 1100 #X position where the enemies stop
         self._direction = 1  # Initial direction: 1 for down, -1 for up
-        self._shoot_delay = 3
+        self._shoot_delay = 4.878
         self._shoot_timer = 0
-        self._shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
+        self._shoot_sound = mixer.Sound("Assets/Audio/DPitchBullet.mp3")
         self._health = 8
 
     @property
@@ -31,7 +31,7 @@ class EnemyLvl2(Component):
     
     def awake(self, game_world):
         self._game_world = game_world
-        self._shoot_sound.set_volume(self._game_world.SFX_volume/1000)
+        self._shoot_sound.set_volume(self._game_world.SFX_volume/2500)
 
         sr = self._gameObject.get_component("SpriteRenderer")
         sr.scale(self._scale_factor)
@@ -71,10 +71,10 @@ class EnemyLvl2(Component):
                 self._speed_x = 200
 
         if self._health <= 0:
-            if self._gameObject in self._game_world.current_State.enemy_amount:
-                self._game_world.current_State.enemy_amount.remove(self._gameObject)
-            print(len(self._game_world.current_State.enemy_amount))
-            self._game_world.current_State.give_score(20)
+            if self._gameObject in self._game_world.current_State._enemy_amount:
+                self._game_world.current_State._enemy_amount.remove(self._gameObject)
+            print(len(self._game_world.current_State._enemy_amount))
+            self._game_world.current_State.give_score(10)
             self._gameObject.destroy()
 
     def shoot(self):
