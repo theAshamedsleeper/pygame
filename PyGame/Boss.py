@@ -22,7 +22,7 @@ class Boss(Component):
     def awake(self, game_world):
         self._game_world = game_world
         sr = self._gameObject.get_component("SpriteRenderer")
-        self.shoot_sound.set_volume(self._game_world.SFX_volume/100)
+        self.shoot_sound.set_volume(self._game_world.SFX_volume/300)
         sr.scale(self.scale_factor)
         self._screen_size = pygame.math.Vector2(game_world.screen.get_width(),game_world.screen.get_height())
         self._sprite_size = pygame.math.Vector2(sr.sprite_image.get_width(),sr.sprite_image.get_height())
