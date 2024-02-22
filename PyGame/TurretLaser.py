@@ -117,9 +117,16 @@ class PlamsaExplosion(Component):
     def on_collision_enter(self, other):
         if other.gameObject.has_component("Enemy"):
             other.gameObject.destroy()
+            self._game_world.current_State.give_score(10)
         
         if other.gameObject.has_component("EnemyLvl2"):
             other.gameObject.destroy()
+            self._game_world.current_State.give_score(20)
+
+        if other.gameObject.has_component("EnemyLaser"):
+            laser = other.gameObject.get_component("EnemyLaser")
+            laser.gameObject.destroy()
+            self._game_world.current_State.give_score(1)
 
             
 
