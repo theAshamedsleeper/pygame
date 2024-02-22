@@ -5,7 +5,7 @@ from State import SecondLevelState
 from State import ThirdLevelState
 from State import loosOrVicState
 from GameObject import GameObject
-
+ 
 class GameWorld:
     def __init__(self) -> None:
         pygame.init()  
@@ -22,9 +22,9 @@ class GameWorld:
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
         self._STT_ammo_count = "||||" 
-        self._score = 0
+        self._score = 0            
         self._game_paused = False
-        menu = FirstLevelState(self)
+        menu = MenuState(self)
         self._currentState = menu
         
 
@@ -64,7 +64,6 @@ class GameWorld:
     def worldPause(self):
         return self._game_paused
     
-   
     
     @STT_ammo.setter
     def STT_ammo(self, value):
