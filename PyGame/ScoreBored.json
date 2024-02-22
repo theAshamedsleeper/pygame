@@ -1,14 +1,10 @@
 {
-    "Bing hillning": {
-        "name": "Bing hillning",
-        "score": "0"
-    },
-    "sdasd": {
-        "name": "sdasd",
-        "score": "0"
-    },
     "Only one": {
         "name": "Only one",
         "score": "221"
+    },
+    "": {
+        "name": "",
+        "score": "0"
     }
 }

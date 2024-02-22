@@ -980,7 +980,7 @@ class ThirdLevelState(State): #Boss level
         #So its reset from the start
         self._game_world.STT_ammo = "||||"
         
-        self.should_boss_spawn = True
+        self.should_boss_spawn = False
         
         #not selected
         self._text_font = pygame.font.Font("Assets\\Font\\ARCADE_R.TTF", 25)
@@ -1088,6 +1088,9 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_two)
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
+        
+        self._before_boss_spawn = 0
+        
 
     def give_score(self, value):
         self._player_score+=value
@@ -1211,9 +1214,13 @@ class ThirdLevelState(State): #Boss level
         self._fore_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
 
-        if self._enemy_timer >= self.enemy_delay:
-            self.spawn_enemy()
-            self._enemy_timer = 0 #resets cooldown after shoot()
+        if self._before_boss_spawn <= 10:
+            if self._enemy_timer >= self.enemy_delay:
+                self.spawn_enemy()
+                if  self._before_boss_spawn == 10:
+                    self.should_boss_spawn = True
+                self._before_boss_spawn += 1
+                self._enemy_timer = 0 #resets cooldown after shoot()
         
         if self.should_boss_spawn == True:
             self.spawn_boss()
