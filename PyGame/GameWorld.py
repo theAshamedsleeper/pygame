@@ -64,7 +64,6 @@ class GameWorld:
     def worldPause(self):
         return self._game_paused
     
-   
     
     @STT_ammo.setter
     def STT_ammo(self, value):
