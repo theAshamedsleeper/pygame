@@ -4,22 +4,21 @@ from GameObject import GameObject
 from Components import SpriteRenderer
 from Components import Component
 from Components import EnemyLaser
-from Components import Collider
 from pygame import mixer
 
 
-class Enemy(Component):
-    def __init__(self, scale_factor=0.3) -> None:
+class EnemyLvl2(Component):
+    def __init__(self, scale_factor=0.35) -> None:
         super().__init__()
         self._speed_x = 201
-        self._speed_y = 50
+        self._speed_y = 70
         self._scale_factor = scale_factor
         self._stop_x_position = 1100 #X position where the enemies stop
         self._direction = 1  # Initial direction: 1 for down, -1 for up
-        self._shoot_delay = 4.15
+        self._shoot_delay = 3
         self._shoot_timer = 0
         self._shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
-        self._health = 3
+        self._health = 8
 
     @property
     def health(self):
@@ -81,8 +80,7 @@ class Enemy(Component):
         self._shoot_sound.play()
         projectile = GameObject(None)
         sr = projectile.add_component(SpriteRenderer("EnemyLaser.png"))
-        projectile.add_component(Collider())
-        scale_factor = 3  # You can adjust this value as needed
+        scale_factor = 3
         sr.scale(scale_factor)
         projectile.add_component(EnemyLaser())
 
