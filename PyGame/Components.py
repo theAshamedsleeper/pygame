@@ -71,6 +71,7 @@ class SpriteRenderer(Component):
         image_width, image_height = self._sprite_image.get_size()
         self._sprite.rect = pygame.Rect(0,0, image_width, image_height)
         self._sprite.rect.center = (self._sprite.rect.width // 2, self._sprite.rect.height // 2)
+        self._sprite_mask = pygame.mask.from_surface(self.sprite_image)
         
         if sprite_name is not None:
             self._og_sprite_image = pygame.image.load(f"Assets\\{sprite_name}").convert_alpha()
@@ -91,7 +92,11 @@ class SpriteRenderer(Component):
     
     @sprite_image.setter
     def sprite_image(self, value):
-        self._sprite_image = value      
+        self._sprite_image = value  
+
+    @property
+    def sprite_mask(self):
+        return self._sprite_mask    
     
     @property
     def sprite_rect(self):
@@ -236,15 +241,25 @@ class Laser(Component):
 class Collider():
     def __init__(self) -> None:
         self._other_colliders = []
+        self._other_masks = []
+        self._listeners = {}
 
     def awake(self, game_world):
         sr = self.gameObject.get_component("SpriteRenderer")
-        self._collision_box = sr.sprite.rect
-        game_world.colliders.append(self)
+        self._collision_box = sr.sprite_rect
+        self._sprite_mask = sr.sprite_mask
+        game_world.current_State.colliders.append(self)
 
     @property
     def collision_box(self):
         return self._collision_box
+    
+    @property
+    def sprite_mask(self):
+        return self._sprite_mask
+    
+    def subscribe(self, service, method):
+        self._listeners[service] = method
     
     def collision_check(self, other):
         is_rect_colliding = self._collision_box.colliderect(other.collision_box)
@@ -254,10 +269,25 @@ class Collider():
             if not is_already_colliding:
                 self.collision_enter(other)
                 other.collision_enter(self)
+            if self.check_pixel_collision(self._collision_box, other.collision_box,self._sprite_mask, other.sprite_mask):
+                if other not in self._other_masks:
+                    self.pixel_collision_enter(other)
+                    other.pixel_collision_enter(self)
+               
+            else:
+                if other in self._other_masks:
+                    self.pixel_collision_exit(other)
+                    other.pixel_collision_exit(self)
         else:
             if is_already_colliding:
                 self.collision_exit(other)
                 other.collision_exit(self)
+
+    def check_pixel_collision(self, collision_box1, collision_box2, mask1, mask2):
+        offset_x = collision_box2.x - collision_box1.x
+        offset_y = collision_box2.y - collision_box1.y
+
+        return mask1.overlap(mask2, (offset_x,offset_y)) is not None
 
     def start(self):
         pass
@@ -267,11 +297,23 @@ class Collider():
 
     def collision_enter(self, other):
         self._other_colliders.append(other)
-        print("Collision enter")
+        if "collision_enter" in self._listeners:
+            self._listeners["collision_enter"](other)
 
     def collision_exit(self, other):
          self._other_colliders.remove(other)
-         print("Collision exit")
+         if "collision_exit" in self._listeners:
+            self._listeners["collision_exit"](other)
+
+    def pixel_collision_enter(self,other):
+        self._other_masks.append(other)
+        if "pixel_collision_enter" in self._listeners:
+            self._listeners["pixel_collision_enter"](other)
+
+    def pixel_collision_exit(self,other):
+         self._other_masks.remove(other)
+         if "pixel_collision_exit" in self._listeners:
+            self._listeners["pixel_collision_exit"](other)
          
 class EnemyLaser(Component):
     def awake(self, game_world):
