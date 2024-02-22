@@ -233,9 +233,11 @@ class FirstLevelState(State):
     def __init__(self, game_world) -> None:
         super().__init__(game_world)
         self.clock = pygame.time.Clock()
-        self.enemy_amount = []
-        self.enemy_max = 20 #max amount of enemies that spawn in this level
+        self._enemy_amount = []
+        self._enemy_max = 20 #max amount of enemies that spawn in this level
+        self._enemy_counter = 0
 
+       
 
         self._player_score = 0
         self._menu_sele = 0
@@ -270,7 +272,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 4 #Sekunder mellem enemies
+        self.enemy_delay = 0.5 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -339,18 +341,28 @@ class FirstLevelState(State):
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
-        
+    @property
+    def enemy_amount(self):
+        return self._enemy_amount
+    
+    @enemy_amount.setter
+    def enemy_amount(self, value):
+        self._enemy_amount = value
+
+
+    def give_score(self, value):
+        self._player_score+=value
+
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
         self._game_world.screen.blit(img,(x,y))
 
     def spawn_enemy(self):
-        self.enemy_amount.append("enemy added")
         go_enemy = GameObject(pygame.math.Vector2(0,0))
         go_enemy.add_component(SpriteRenderer("Spaceships\\Enemy_ship_01.png"))
         go_enemy.add_component(Enemy())
         go_enemy.add_component(Collider())
-
+        self._enemy_amount.append(go_enemy)
         self.instantiate(go_enemy)
 
     def spawn_boss(self):  
@@ -375,7 +387,7 @@ class FirstLevelState(State):
         #Makes a copy om _gameObjects and runs through that instead of the orginal
         for gameObject in self._gameObjects[:]:
             gameObject.start()
-        self.spawn_boss()
+        #self.spawn_boss()
 
     def move_to_endscreen(self, Win):#Win is bool
         self._music = mixer.music.pause()
@@ -432,7 +444,6 @@ class FirstLevelState(State):
         #Game not paused
         self.enemy_timer +=delta_time
 
-
         self._background_go.update(delta_time)
         self._fore_ground_go.update(delta_time)
         self._middle_ground_go.update(delta_time)
@@ -455,10 +466,11 @@ class FirstLevelState(State):
         
         # self._effect_ground_go.update(delta_time)
         
-        
-        if self.enemy_timer >= self.enemy_delay and len(self.enemy_amount) <=self.enemy_max:
+        if self.enemy_timer >= self.enemy_delay and self._enemy_counter <=self._enemy_max:
+            self._enemy_counter+1
             self.spawn_enemy()
             self.enemy_timer = 0 #resets cooldown after shoot()
+            
 
         self.drawing_UI()
         self.handle_input()
@@ -672,6 +684,9 @@ class SecondLevelState(State):
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
     
+    def give_score(self, value):
+        self._player_score+=value
+
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
         self._game_world.screen.blit(img,(x,y))
@@ -772,6 +787,7 @@ class SecondLevelState(State):
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
+            self._colliders = [obj for obj in self._colliders if not obj.gameObject._is_destroyed]
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV2_go.update(delta_time)  
         self._effect_groundV2_go.update(delta_time)
@@ -995,6 +1011,9 @@ class ThirdLevelState(State): #Boss level
         self._gameObjects.append(go_turret_three)
         self._gameObjects.append(go_turret_four)
 
+    def give_score(self, value):
+        self._player_score+=value
+
     def draw_text(self,text, font, text_col, x, y):
         img = font.render(text, True, text_col)
         self._game_world.screen.blit(img,(x,y))
@@ -1094,6 +1113,7 @@ class ThirdLevelState(State): #Boss level
                 for j in range(i + 1, len(self._colliders)):
                     collider2 = self._colliders[j]
                     collider1.collision_check(collider2)
+            self._colliders = [obj for obj in self._colliders if not obj.gameObject._is_destroyed]
             self._gameObjects = [obj for obj in self._gameObjects if not obj._is_destroyed]
         self._fore_groundV3_go.update(delta_time)
         self._effect_groundv3_go.update(delta_time)
