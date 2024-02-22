@@ -271,7 +271,7 @@ class FirstLevelState(State):
         self._effect_ground_go = GameObject(position=(0, 0))
         self._effect_ground_go.add_component(Background(game_world, image_path=self._effect_ground_image_path, scroll_speed=self._effect_ground_scroll_speed))
 
-        self.enemy_delay = 0.477 #Sekunder mellem enemies
+        self.enemy_delay = 0.4878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -644,7 +644,7 @@ class SecondLevelState(State):
         self._effect_groundV2_go = GameObject(position=(0, 0))
         self._effect_groundV2_go.add_component(Background(game_world, image_path=self._effect_groundV2_image_path, scroll_speed=self._effect_groundV2_scroll_speed))
         
-        self.enemy_delay = 4.77 #Sekunder mellem enemies
+        self.enemy_delay = 4.878 #Sekunder mellem enemies
         self.enemy_timer = 0
 
         # background_music = mixer
@@ -1008,7 +1008,7 @@ class ThirdLevelState(State): #Boss level
         self._effect_groundv3_go = GameObject(position=(0, 0))
         self._effect_groundv3_go.add_component(Background(game_world, image_path=self._effect_groundv3_image_path, scroll_speed=self._effect_groundv3_scroll_speed))
         
-        self.enemy_delay = 1.908 #Sekunder mellem enemies
+        self.enemy_delay = 1.9512 #Sekunder mellem enemies
         self._enemy_timer = 0    
 
         # background_music = mixer
