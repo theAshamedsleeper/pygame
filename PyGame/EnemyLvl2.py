@@ -16,7 +16,7 @@ class EnemyLvl2(Component):
         self._scale_factor = scale_factor
         self._stop_x_position = 1100 #X position where the enemies stop
         self._direction = 1  # Initial direction: 1 for down, -1 for up
-        self._shoot_delay = 4.77
+        self._shoot_delay = 4.878
         self._shoot_timer = 0
         self._shoot_sound = mixer.Sound("Assets/Audio/DPitchBullet.mp3")
         self._health = 8
