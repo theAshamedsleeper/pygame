@@ -70,9 +70,9 @@ class EnemyLvl2(Component):
                 self._speed_x = 200
 
         if self._health <= 0:
-            if self._gameObject in self._game_world.current_State.enemy_amount:
-                self._game_world.current_State.enemy_amount.remove(self._gameObject)
-            print(len(self._game_world.current_State.enemy_amount))
+            if self._gameObject in self._game_world.current_State._enemy_amount:
+                self._game_world.current_State._enemy_amount.remove(self._gameObject)
+            print(len(self._game_world.current_State._enemy_amount))
             self._game_world.current_State.give_score(10)
             self._gameObject.destroy()
 
