@@ -493,9 +493,9 @@ class FirstLevelState(State):
             
 
         if self.drawen_start_level == False:
-            if self.enemy_timer <= 2:
+            if self.enemy_timer <= 1.2:
                 self.draw_text("First level started",self._text_font,(255, 255, 255), 750, 450)
-            if self.enemy_timer >= 2:
+            if self.enemy_timer >= 1.2:
                 self.drawen_start_level = True
         
         if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
@@ -1229,9 +1229,9 @@ class ThirdLevelState(State): #Boss level
             self.should_boss_spawn = False
         
         if self.drawen_start_level == False:
-            if self._enemy_timer <= 2:
+            if self._enemy_timer <= 1.8:
                 self.draw_text("Final level started",self._text_font,(255, 255, 255), 750, 450)
-            if self._enemy_timer >= 2:
+            if self._enemy_timer >= 1.8:
                 self.drawen_start_level = True
 
         if self._enemy_counter >= self._enemy_max and len(self._enemy_amount) == 0:
