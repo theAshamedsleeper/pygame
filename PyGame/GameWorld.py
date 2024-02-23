@@ -18,7 +18,7 @@ class GameWorld:
         self._nextState = None
         self._newState = None
         self._music_vol = 50
-        self._SFX_vol = 100
+        self._SFX_vol = 50
         self._started_on_level = False
         self._graphics = ["Low", "Medium", "High"]
         self._STT_ammo_count = "||||" 
@@ -63,6 +63,10 @@ class GameWorld:
     @property
     def worldPause(self):
         return self._game_paused
+    
+    @worldPause.setter
+    def worldPause(self, value):
+        self._game_paused = value
     
     
     @STT_ammo.setter

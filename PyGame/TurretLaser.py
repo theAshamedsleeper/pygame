@@ -94,11 +94,12 @@ class PlamsaExplosion(Component):
     def __init__(self, position, sound) -> None:
         self._position_to_set = position
         self._sound = sound
+        self._damage = 1000
 
     def awake(self, game_world):
         self._gameObject.transform.position = self._position_to_set
         self._game_world = game_world
-        self._sound.set_volume(self._game_world.SFX_volume/200)
+        self._sound.set_volume(self._game_world.SFX_volume/400)
         collider = self._gameObject.get_component("Collider")
         collider.subscribe("collision_enter",self.on_collision_enter)
         collider.subscribe("collision_exit", self.on_collision_exit)
@@ -116,17 +117,19 @@ class PlamsaExplosion(Component):
 
     def on_collision_enter(self, other):
         if other.gameObject.has_component("Enemy"):
-            other.gameObject.destroy()
+            enemy = other.gameObject.get_component("Enemy")
+            enemy.health -= self._damage
             self._game_world.current_State.give_score(10)
         
         if other.gameObject.has_component("EnemyLvl2"):
-            other.gameObject.destroy()
+            enemy = other.gameObject.get_component("EnemyLvl2")
+            enemy.health -= self._damage
             self._game_world.current_State.give_score(20)
 
         if other.gameObject.has_component("EnemyLaser"):
             laser = other.gameObject.get_component("EnemyLaser")
-            laser.gameObject.destroy()
             self._game_world.current_State.give_score(1)
+                       
 
             
 

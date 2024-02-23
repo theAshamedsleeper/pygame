@@ -21,7 +21,7 @@ class MotherShip(Component):
         self._turret_three = None
         self._turret_four = None
         self._shot_index = 0
-        self._shoot_time = 0
+        self._shoot_time = 4
         self._plasma_anim = []
         self._plasma_sound = None
         self._current_health = 100

@@ -1,42 +1,10 @@
 {
-    "Only one": {
-        "name": "Only one",
-        "score": "221"
-    },
-    "": {
-        "name": "",
+    "Madge": {
+        "name": "Madge",
         "score": "0"
     },
-    " ,,,": {
-        "name": " ,,,",
-        "score": "0"
-    },
-    " ": {
-        "name": " ",
-        "score": "0"
-    },
-    "     ": {
-        "name": "     ",
-        "score": "0"
-    },
-    "": {
-        "name": "",
-        "score": "0"
-    },
-    " (3)": {
-        "name": " (3)",
-        "score": "0"
-    },
-    " (4)": {
-        "name": " (4)",
-        "score": "0"
-    },
-    ",": {
-        "name": ",",
-        "score": "0"
-    },
-    " (5)": {
-        "name": " (5)",
-        "score": "0"
+    "Madgeagain": {
+        "name": "Madgeagain",
+        "score": "1400"
     }
 }

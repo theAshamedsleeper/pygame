@@ -10,7 +10,7 @@ from Components import Collider
 class Player(Component):
 
     def __init__(self):
-        self.shoot_delay = 0.477
+        self.shoot_delay = 0.4878
         self.shoot_timer = 0
         self.shoot_sound = mixer.Sound("Assets\\Audio\\Pew1.mp3")
         self._thruster = None
